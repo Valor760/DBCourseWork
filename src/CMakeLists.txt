@@ -9,4 +9,10 @@ file(GLOB_RECURSE HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/*.h)
 
 add_executable(${TARGET} ${SRC} ${HEADERS})
 
-target_link_libraries(${TARGET} PUBLIC glfw3 imgui)
+if(UNIX)
+set(LIBS pthread GL dl)
+else()
+set(LIBS)
+endif()
+
+target_link_libraries(${TARGET} PUBLIC glfw3 imgui ${LIBS})

@@ -38,8 +38,10 @@ link_directories("3rdparty/GLFW/lib")
 
 
 # Add include directories
-include_directories("3rdparty/imgui")
-include_directories("3rdparty/")
+include_directories(${3RDPARTY_DIR}/imgui)
+include_directories(${3RDPARTY_DIR}/imgui/backends)
+include_directories(${3RDPARTY_DIR}/)
+include_directories(${3RDPARTY_DIR}/glad/include)
 
 
 # Add sub projects
