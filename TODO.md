@@ -1,0 +1,6 @@
+- [] Make a wrapper for sqlite
+	- [] Initialize variables
+	- [] Check if DB present
+	- [] Read data to structures
+- [] Make logging
+- [] Make ImGui wrapper
