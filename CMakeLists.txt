@@ -42,6 +42,7 @@ include_directories(${3RDPARTY_DIR}/imgui)
 include_directories(${3RDPARTY_DIR}/imgui/backends)
 include_directories(${3RDPARTY_DIR}/)
 include_directories(${3RDPARTY_DIR}/glad/include)
+include_directories(${3RDPARTY_DIR}/sqlite)
 
 
 # Add sub projects

@@ -15,4 +15,4 @@ else()
 	set(LIBS opengl32)
 endif()
 
-target_link_libraries(${TARGET} PUBLIC glfw3 imgui ${LIBS})
+target_link_libraries(${TARGET} PUBLIC glfw3 imgui sqlite ${LIBS})
