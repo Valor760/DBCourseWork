@@ -2,5 +2,6 @@
 	- [] Initialize variables
 	- [] Check if DB present
 	- [] Read data to structures
+		-[] What if write data to string and parse it, depending on last table?
 - [] Make logging
 - [] Make ImGui wrapper
