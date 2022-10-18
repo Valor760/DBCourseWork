@@ -25,59 +25,38 @@ int DataBase::init(const std::string& db_path) {
 }
 
 int DataBase::callback(void* data, int argc, char** argv, char** column_name) {
-	// enum TABLES table_type = *(TABLES*)data;
-
-	// if(argc > 0 || table_type == TABLE_NONE) {
-	// 	switch(table_type) {
-	// 		case TABLE_FLIGHTS:
-				
-	// 			break;
-	// 		case TABLE_AIRPLANES:
-	// 			break;
-	// 		case TABLE_BAGGAGE:
-	// 			break;
-	// 		case TABLE_EMPLOYEES:
-	// 			break;
-	// 		case TABLE_HANGAR:
-	// 			break;
-	// 		case TABLE_ONE_FLIGHT:
-	// 			break;
-	// 		case TABLE_PASSENGERS:
-	// 			break;
-	// 		default:
-	// 			std::cout << "Wrong table type\n";
-	// 			return -1;
-	// 	}
-	// 	return 0;
-	// }
-	// else
-	// 	return 0;
 	if(argc > 0) {
-		last_query_result = ""; // Flush previous content
-		while(**argv) {
-			last_query_result += **argv;
-			last_query_result += TABLE_COLUMN_DELIMITER;
-			*argv++;
+		if(m_LastQuery_Columns.empty()) {
+			// Fill column names if vector is empty
+			for(int i = 0; i < argc; i++) {
+				m_LastQuery_Columns.push_back(std::string(column_name[i]));
+			}
 		}
+		std::vector<std::string> curr_row;
+		for(int i = 0; i < argc; i++) {
+			curr_row.push_back(std::string(argv[i]));
+		}
+		m_LastQuery_Values.push_back(curr_row);
+		return 0;
 	}
-	return 0;
+	return -1;
 }
 
 int DataBase::create(const std::string& query) {
 	return execute(query);
 }
 
-int DataBase::execute(const std::string& query, const TABLES& table) {
+int DataBase::execute(const std::string& query) {
 	if(query.empty()) {
 		std::cout << "ERROR: Execution query is empty!\n";
 		return -1;
 	}
 
 	char* error_msg = nullptr;
-	if(sqlite3_exec(m_DB, query.c_str(), callback, (void*)table, &error_msg) != SQLITE_OK) {
+	if(sqlite3_exec(m_DB, query.c_str(), callback, nullptr, &error_msg) != SQLITE_OK) {
 		std::cout << "An error while executing SQL statement occurred!\n"
 			<< "SQL: " << query << "\n"
-			<< "Error msg: " << error_msg << std::endl;
+			<< "Error msg: " << error_msg << '\n';
 		sqlite3_free(error_msg);
 		return -1;
 	}
@@ -86,9 +65,22 @@ int DataBase::execute(const std::string& query, const TABLES& table) {
 	}
 }
 
-// Parse last query result and return appropriate structure
-auto DataBase::get_last_result() {
-	if(last_query_result.empty())
+auto& DataBase::get_last_query_result() const {
+	return m_LastQuery_Values;
+}
+
+auto& DataBase::get_last_query_columns() const {
+	return m_LastQuery_Columns;
+}
+
+void DataBase::empty_last_query() {
+	// Empty query column names
+	while(!m_LastQuery_Columns.empty())
+		m_LastQuery_Columns.pop_back();
+	
+	// Empty received values
+	while(!m_LastQuery_Values.empty())
+		m_LastQuery_Values.pop_back();
 }
 } // namespace DB
 
