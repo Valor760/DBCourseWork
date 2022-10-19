@@ -5,12 +5,14 @@
 
 int main(int argc, char** argv)
 {
-	App::MainApp app;
-	if(app.init() != 0) {
-		std::cout << "Error occured during main app initialization!\n";
+	try {
+		App::MainApp app;
+		app.init();
+		app.run();
+	}
+	catch(const std::exception& e) {
+		std::cout << e.what() << '\n';
 		return 1;
 	}
-	app.run();
-
 	return 0;
 }
