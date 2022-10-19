@@ -1,7 +1,7 @@
-- [] Make a wrapper for sqlite
-	- [] Initialize variables
+- [x] Make a wrapper for sqlite
+	- [x] Initialize variables
 	- [x] Check if DB present
-	- [] Read data to structures
+	- [] Read data to structures (CANCELED)
 		-[] What if write data to string and parse it, depending on last table?
 - [] Make logging
 - [] Make ImGui wrapper
