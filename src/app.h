@@ -1,11 +1,9 @@
 #pragma once
 
-#include <imgui.h>
-#include <imgui_impl_glfw.h>
-#include <imgui_impl_opengl3.h>
-#include <GLFW/glfw3.h>
-
+#include "gui.h"
 #include "database.h"
+
+#define SIDE_MENU_WIDTH 200
 
 
 namespace App {
@@ -22,7 +20,6 @@ class MainApp {
 
 	private:
 		void init_opengl();
-		void init_imgui();
 		static void gl_key_callback(GLFWwindow* window, int key, int scan_code, int action, int mode);
 
 		// A seperate function, to not create mess in the while() loop
@@ -33,8 +30,10 @@ class MainApp {
 		GLFWwindow* m_Window = nullptr;
 		static inline bool m_WindowShouldClose = false;
 
-		// FIXME: Maybe change this?
+		// FIXME: Maybe change this to dynamic?
 		int m_WindowWidth = 1600;
 		int m_WindowHeight = 900;
+
+		ImGuiIO* m_IO = nullptr;
 };
 } // namespace App
