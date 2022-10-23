@@ -1,5 +1,5 @@
 #include "database.h"
-
+#include "constants.h"
 
 namespace DB {
 DataBase::~DataBase() {
@@ -14,7 +14,10 @@ void DataBase::init(std::string db_path) {
 	}
 
 	int result = sqlite3_open(db_path.c_str(), &m_DB);
-	throw std::runtime_error("Cannot open or create database on path: " + db_path);
+	if(result != SQLITE_OK)
+		throw std::runtime_error("Cannot open or create database on path: " + db_path);
+	
+	create_tables();
 }
 
 int DataBase::callback(void* data, int argc, char** argv, char** column_name) {
@@ -75,5 +78,12 @@ void DataBase::empty_last_query() {
 		m_LastQuery_Values.pop_back();
 
 	std::cout << "Emptied last query\n";
+}
+
+void DataBase::create_tables() {
+	for(auto& query : ALL_CREATE_TABLES)
+		if(execute(query) != 0) {
+			break;
+		}
 }
 } // namespace DB

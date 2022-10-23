@@ -12,7 +12,7 @@ void MainApp::init() {
 	init_opengl();
 	gui::Init(m_Window, m_IO);
 
-	// m_DB.init("");
+	m_DB.init("");
 }
 
 void MainApp::init_opengl() {

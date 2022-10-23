@@ -4,7 +4,7 @@
 #include <iostream>
 #include <vector>
 
-#define TABLE_COLUMN_DELIMITER ";;;"
+// #define TABLE_COLUMN_DELIMITER ";;;"
 
 
 namespace DB {
@@ -17,9 +17,7 @@ class DataBase {
 		DataBase(DataBase&&) = delete;
 		DataBase& operator=(const DataBase&) = delete;
 
-		// Initialize database
-		//
-		// return 0 if success, -1 otherwise
+		// Initialize database and tables
 		void init(std::string db_path);
 		int execute(const std::string& query);
 
@@ -33,6 +31,7 @@ class DataBase {
 	
 	private:
 		static int callback(void* data, int argc, char** argv, char** column_name);
+		void create_tables();
 
 	private:
 		sqlite3* m_DB = nullptr;
