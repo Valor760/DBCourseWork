@@ -2,6 +2,10 @@
 
 #include <string.h>
 #include <iostream>
+#include <vector>
+
+#define TABLE_COLUMN_DELIMITER ";;;"
+
 
 namespace DB {
 class DataBase {
@@ -16,9 +20,24 @@ class DataBase {
 		// Initialize database
 		//
 		// return 0 if success, -1 otherwise
-		int init(std::string db_path);
+		void init(std::string db_path);
+		int execute(const std::string& query);
+
+		// Returns m_LastQuery_Values
+		auto& get_last_query_result() const;
+		// Returns m_LastQuery_Columns
+		auto& get_last_query_columns() const;
+
+		// Empties m_LastQuery_Columns and m_LastQuery_Values
+		void empty_last_query();
 	
 	private:
-		sqlite3* db = nullptr;
+		static int callback(void* data, int argc, char** argv, char** column_name);
+
+	private:
+		sqlite3* m_DB = nullptr;
+
+		static inline std::vector<std::string> m_LastQuery_Columns;
+		static inline std::vector<std::vector<std::string>> m_LastQuery_Values;
 };
 } // namespace DB
