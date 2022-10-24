@@ -20,6 +20,10 @@ void DataBase::init(std::string db_path) {
 	create_tables();
 }
 
+void DataBase::init() {
+	init("");
+}
+
 int DataBase::callback(void* data, int argc, char** argv, char** column_name) {
 	if(argc > 0) {
 		if(m_LastQuery_Columns.empty()) {

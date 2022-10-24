@@ -12,7 +12,7 @@ void MainApp::init() {
 	init_opengl();
 	gui::Init(m_Window, m_IO);
 
-	m_DB.init("");
+	m_DB.init();
 }
 
 void MainApp::init_opengl() {
@@ -73,12 +73,17 @@ void MainApp::run_main() {
 	ImGui::SetNextWindowPos(ImVec2(SIDE_MENU_WIDTH, 0));
 	ImGui::Begin("Table Test", nullptr, flags);
 	if (ImGui::BeginTable("table2", 3))
-        {
+        {	
+			static char inputs[4][256];
             for (int row = 0; row < 4; row++)
             {
                 ImGui::TableNextRow();
                 ImGui::TableNextColumn();
-                ImGui::Text("Row %d", row);
+				
+				ImGui::PushID(row);
+                ImGui::InputText("Input me", inputs[row], IM_ARRAYSIZE(inputs[row]));
+				ImGui::PopID();
+
                 ImGui::TableNextColumn();
                 ImGui::Text("Some contents");
                 ImGui::TableNextColumn();

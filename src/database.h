@@ -18,6 +18,7 @@ class DataBase {
 		DataBase& operator=(const DataBase&) = delete;
 
 		// Initialize database and tables
+		void init();
 		void init(std::string db_path);
 		int execute(const std::string& query);
 
