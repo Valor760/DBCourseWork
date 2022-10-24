@@ -5,6 +5,6 @@
 		-[] What if write data to string and parse it, depending on last table?
 - [] Make logging
 - [] Make ImGui wrapper
-- [] Add constants
-	- [] Add table names
-	- [] Add column count to each table (maybe do this in map?)
+- [x] Add constants
+	- [x] Add table names
+	- [x] Add column count to each table (maybe do this in map?)

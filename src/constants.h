@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <unordered_map>
 
 const char* create_table_passengers =
 	"CREATE TABLE IF NOT EXISTS Passengers ("
@@ -127,4 +128,25 @@ const std::vector<const char*> ALL_CREATE_TABLES =
 		create_table_passengers, create_table_baggage, create_table_airplanes,
 		create_table_hangars, create_table_employees, create_table_employeeaddress,
 		create_table_flights, create_table_flightregister
+	};
+
+const char* TABLE_PASSENGERS		= "Passengers";
+const char* TABLE_BAGGAGE			= "Baggage";
+const char* TABLE_AIRPLANES			= "Airplanes";
+const char* TABLE_HANGARS			= "Hangars";
+const char* TABLE_EMPLOYEES			= "Employees";
+const char* TABLE_EMPLOYEEADDRESS	= "EmployeeAddress";
+const char* TABLE_FLIGHTS			= "Flights";
+const char* TABLE_FLIGHTREGISTER	= "FlightRegister";
+
+const std::unordered_map<const char*, int> TABLE_COLUMN_COUNT =
+	{
+		{TABLE_PASSENGERS,		5},
+		{TABLE_BAGGAGE,			4},
+		{TABLE_AIRPLANES,		4},
+		{TABLE_HANGARS,			3},
+		{TABLE_EMPLOYEES,		10},
+		{TABLE_EMPLOYEEADDRESS,	6},
+		{TABLE_FLIGHTS,			11},
+		{TABLE_FLIGHTREGISTER,	2}
 	};
