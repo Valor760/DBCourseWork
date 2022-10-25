@@ -37,18 +37,23 @@ void MainApp::init_opengl() {
 }
 
 void MainApp::gl_key_callback(GLFWwindow* window, int key, int scan_code, int action, int mode) {
-	if(action == GLFW_PRESS) {
-		switch(key) {
-			case GLFW_KEY_ESCAPE:
-				// Our app will have only one window, so this variable is enough
-				m_WindowShouldClose = true;
-				break;
-		}
+	if(action == GLFW_PRESS)
+		m_Keys[key] = true;
+	
+	if(action == GLFW_RELEASE)
+		m_Keys[key] = false;
+}
+
+void MainApp::process_keys() {
+	if(m_Keys[GLFW_KEY_ESCAPE]) {
+		glfwSetWindowShouldClose(m_Window, GLFW_TRUE);
 	}
+
+	// if(m_Keys[GLFW_KEY_LEFT_CONTROL] && m_Keys[glfwmouse])
 }
 
 void MainApp::run() {
-	while(!(m_WindowShouldClose || glfwWindowShouldClose(m_Window))) {
+	while(!glfwWindowShouldClose(m_Window)) {
 		glfwPollEvents();
 		
 		gui::RenderBegin();
@@ -66,12 +71,15 @@ void MainApp::run_main() {
 	ImGui::SetNextWindowPos(ImVec2(0, 0));
 	ImGui::SetNextWindowSize(ImVec2(SIDE_MENU_WIDTH, m_WindowHeight));
 	ImGui::Begin("Side Panel", nullptr, flags);
+
+
 	ImGui::End();
 
 	// Create table window
 	ImGui::SetNextWindowSize(ImVec2(m_WindowWidth-SIDE_MENU_WIDTH, m_WindowHeight));
 	ImGui::SetNextWindowPos(ImVec2(SIDE_MENU_WIDTH, 0));
 	ImGui::Begin("Table Test", nullptr, flags);
+	ImGui::SetWindowFontScale(m_FontScale);
 	if (ImGui::BeginTable("table2", 3))
         {	
 			static char inputs[4][256];

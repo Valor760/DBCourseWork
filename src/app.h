@@ -21,6 +21,7 @@ class MainApp {
 	private:
 		void init_opengl();
 		static void gl_key_callback(GLFWwindow* window, int key, int scan_code, int action, int mode);
+		void process_keys();
 
 		// A seperate function, to not create mess in the while() loop
 		void run_main();
@@ -28,11 +29,12 @@ class MainApp {
 	private:
 		DB::DataBase m_DB;
 		GLFWwindow* m_Window = nullptr;
-		static inline bool m_WindowShouldClose = false;
+		static inline bool m_Keys[1024] = {0};
 
 		// FIXME: Maybe change this to dynamic?
 		int m_WindowWidth = 1600;
 		int m_WindowHeight = 900;
+		static inline float m_FontScale = 1.;
 
 		ImGuiIO* m_IO = nullptr;
 };

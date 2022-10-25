@@ -1,7 +1,6 @@
 #include "constants.h"
 
 
-namespace CONSTS {
 const char* create_table_passengers =
 	"CREATE TABLE IF NOT EXISTS Passengers ("
 	"P_ID INTEGER PRIMARY KEY AUTOINCREMENT,"
@@ -123,22 +122,30 @@ const char* create_table_flightregister =
 	");"
 ;
 
-const std::vector<const char*> ALL_CREATE_TABLES =
+const char* CONSTS::TABLE_PASSENGERS			= "Passengers";
+const char* CONSTS::TABLE_BAGGAGE				= "Baggage";
+const char* CONSTS::TABLE_AIRPLANES				= "Airplanes";
+const char* CONSTS::TABLE_HANGARS				= "Hangars";
+const char* CONSTS::TABLE_EMPLOYEES				= "Employees";
+const char* CONSTS::TABLE_EMPLOYEEADDRESS		= "EmployeeAddress";
+const char* CONSTS::TABLE_FLIGHTS				= "Flights";
+const char* CONSTS::TABLE_FLIGHTREGISTER		= "FlightRegister";
+
+const std::vector<const char*> CONSTS::ALL_CREATE_TABLES =
 	{
 		create_table_passengers, create_table_baggage, create_table_airplanes,
 		create_table_hangars, create_table_employees, create_table_employeeaddress,
 		create_table_flights, create_table_flightregister
 	};
 
-const std::unordered_map<const char*, int> TABLE_COLUMN_COUNT =
+const std::unordered_map<const char*, int> CONSTS::TABLE_COLUMN_COUNT =
 	{
-		{TABLE_PASSENGERS,		5},
-		{TABLE_BAGGAGE,			4},
-		{TABLE_AIRPLANES,		4},
-		{TABLE_HANGARS,			3},
-		{TABLE_EMPLOYEES,		10},
-		{TABLE_EMPLOYEEADDRESS,	6},
-		{TABLE_FLIGHTS,			11},
-		{TABLE_FLIGHTREGISTER,	2}
+		{CONSTS::TABLE_PASSENGERS,		5},
+		{CONSTS::TABLE_BAGGAGE,			4},
+		{CONSTS::TABLE_AIRPLANES,		4},
+		{CONSTS::TABLE_HANGARS,			3},
+		{CONSTS::TABLE_EMPLOYEES,		10},
+		{CONSTS::TABLE_EMPLOYEEADDRESS,	6},
+		{CONSTS::TABLE_FLIGHTS,			11},
+		{CONSTS::TABLE_FLIGHTREGISTER,	2}
 	};
-} // namespace CONSTS
