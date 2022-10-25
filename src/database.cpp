@@ -85,7 +85,7 @@ void DataBase::empty_last_query() {
 }
 
 void DataBase::create_tables() {
-	for(auto& query : ALL_CREATE_TABLES)
+	for(auto& query : CONSTS::ALL_CREATE_TABLES)
 		if(execute(query) != 0) {
 			break;
 		}
