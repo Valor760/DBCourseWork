@@ -9,5 +9,5 @@
 namespace gui {
 void RenderBegin();
 void RenderEnd(GLFWwindow* window, int width, int height);
-void Init(GLFWwindow* window, ImGuiIO* io);
+void Init(GLFWwindow* window);//, ImGuiIO* io);
 } // namespace gui

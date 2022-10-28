@@ -5,6 +5,8 @@
 #include "constants.h"
 
 #define SIDE_MENU_WIDTH 200
+#define FONT_SCALE_MAX 2.5
+#define FONT_SCALE_MIN 0.5
 
 
 namespace App {
@@ -28,6 +30,7 @@ class MainApp {
 		// A seperate functions, to not create mess in the while() loop
 		void draw_side_panel_window();
 		void draw_table_window();
+		void draw_table();
 
 
 	private:
@@ -40,7 +43,8 @@ class MainApp {
 		int m_WindowHeight = 900;
 		static inline float m_FontScale = 1.;
 
-		ImGuiIO* m_IO = nullptr;
-		CONSTS::LABELS m_CurrentLabel = CONSTS::LABEL_NONE;
+		// ImGuiIO* m_IO = nullptr;
+		CONSTS::LABELS m_CurrentLabel = CONSTS::LABEL_SHOW_TABLE;
+		CONSTS::TABLES m_CurrentTable = CONSTS::TABLE_PASSENGERS;
 };
 } // namespace App

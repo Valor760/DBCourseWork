@@ -19,11 +19,11 @@ void RenderEnd(GLFWwindow* window, int width, int height) {
 	glfwSwapBuffers(window);
 }
 
-void Init(GLFWwindow* window, ImGuiIO* io) {
+void Init(GLFWwindow* window) {//, ImGuiIO* io) {
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 
-	io = &ImGui::GetIO();
+	// io = &ImGui::GetIO();
 	
 	// Init imgui platform backends
 	ImGui_ImplGlfw_InitForOpenGL(window, true);

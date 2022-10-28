@@ -145,17 +145,30 @@ const std::unordered_map<std::string, CONSTS::LABELS> LABEL_TO_ENUM =
 		{STR_LABEL_REMOVE_DATA,		CONSTS::LABEL_REMOVE_DATA}
 	};
 
+const std::string STR_TABLE_PASSENGERS			= "Passengers";
+const std::string STR_TABLE_BAGGAGE				= "Baggage";
+const std::string STR_TABLE_AIRPLANES			= "Airplanes";
+const std::string STR_TABLE_HANGARS				= "Hangars";
+const std::string STR_TABLE_EMPLOYEES			= "Employees";
+const std::string STR_TABLE_EMPLOYEEADDRESS		= "EmployeeAddress";
+const std::string STR_TABLE_FLIGHTS				= "Flights";
+const std::string STR_TABLE_FLIGHTREGISTER		= "FlightRegister";
+
+const std::unordered_map<std::string, CONSTS::TABLES> TABLE_TO_ENUM = 
+	{
+		{STR_TABLE_PASSENGERS,		CONSTS::TABLE_PASSENGERS},
+		{STR_TABLE_BAGGAGE,			CONSTS::TABLE_BAGGAGE},
+		{STR_TABLE_AIRPLANES,		CONSTS::TABLE_AIRPLANES},
+		{STR_TABLE_HANGARS,			CONSTS::TABLE_HANGARS},
+		{STR_TABLE_EMPLOYEES,		CONSTS::TABLE_EMPLOYEES},
+		{STR_TABLE_EMPLOYEEADDRESS,	CONSTS::TABLE_EMPLOYEEADDRESS},
+		{STR_TABLE_FLIGHTS,			CONSTS::TABLE_FLIGHTS},
+		{STR_TABLE_FLIGHTREGISTER,	CONSTS::TABLE_FLIGHTREGISTER}
+	};
+
+
 
 // CONSTS struct stuff initialization
-const std::string CONSTS::TABLE_PASSENGERS			= "Passengers";
-const std::string CONSTS::TABLE_BAGGAGE				= "Baggage";
-const std::string CONSTS::TABLE_AIRPLANES			= "Airplanes";
-const std::string CONSTS::TABLE_HANGARS				= "Hangars";
-const std::string CONSTS::TABLE_EMPLOYEES			= "Employees";
-const std::string CONSTS::TABLE_EMPLOYEEADDRESS		= "EmployeeAddress";
-const std::string CONSTS::TABLE_FLIGHTS				= "Flights";
-const std::string CONSTS::TABLE_FLIGHTREGISTER		= "FlightRegister";
-
 const std::vector<std::string> CONSTS::ALL_CREATE_TABLES =
 	{
 		create_table_passengers, create_table_baggage, create_table_airplanes,
@@ -163,17 +176,25 @@ const std::vector<std::string> CONSTS::ALL_CREATE_TABLES =
 		create_table_flights, create_table_flightregister
 	};
 
-const std::unordered_map<std::string, int> CONSTS::TABLE_COLUMN_COUNT =
+const std::vector<std::string> CONSTS::TABLE_NAMES =
 	{
-		{CONSTS::TABLE_PASSENGERS,		5},
-		{CONSTS::TABLE_BAGGAGE,			4},
-		{CONSTS::TABLE_AIRPLANES,		4},
-		{CONSTS::TABLE_HANGARS,			3},
-		{CONSTS::TABLE_EMPLOYEES,		10},
-		{CONSTS::TABLE_EMPLOYEEADDRESS,	6},
-		{CONSTS::TABLE_FLIGHTS,			11},
-		{CONSTS::TABLE_FLIGHTREGISTER,	2}
+		STR_TABLE_PASSENGERS, STR_TABLE_BAGGAGE, STR_TABLE_AIRPLANES,
+		STR_TABLE_HANGARS, STR_TABLE_EMPLOYEES, STR_TABLE_EMPLOYEEADDRESS,
+		STR_TABLE_FLIGHTS, STR_TABLE_FLIGHTREGISTER
 	};
+
+// See FIXME in constants.h
+// const std::unordered_map<std::string, int> CONSTS::TABLE_COLUMN_COUNT =
+// 	{
+// 		{CONSTS::TABLE_PASSENGERS,		5},
+// 		{CONSTS::TABLE_BAGGAGE,			4},
+// 		{CONSTS::TABLE_AIRPLANES,		4},
+// 		{CONSTS::TABLE_HANGARS,			3},
+// 		{CONSTS::TABLE_EMPLOYEES,		10},
+// 		{CONSTS::TABLE_EMPLOYEEADDRESS,	6},
+// 		{CONSTS::TABLE_FLIGHTS,			11},
+// 		{CONSTS::TABLE_FLIGHTREGISTER,	2}
+// 	};
 
 const std::vector<std::string> CONSTS::MENU_LABELS = 
 	{
@@ -182,7 +203,7 @@ const std::vector<std::string> CONSTS::MENU_LABELS =
 		STR_LABEL_QUERY_5,		STR_LABEL_QUERY_6,		STR_LABEL_REMOVE_DATA
 	};
 
-std::string CONSTS::ConvertLabel(const CONSTS::LABELS& label) {
+std::string CONSTS::ConvertLabelName(const CONSTS::LABELS& label) {
 	for(auto& [key, value] : LABEL_TO_ENUM) {
 		if(value == label)
 			return key;
@@ -190,10 +211,26 @@ std::string CONSTS::ConvertLabel(const CONSTS::LABELS& label) {
 	throw std::runtime_error("ERROR: No label with number " + std::to_string(label) + " found!");
 }
 
-CONSTS::LABELS CONSTS::ConvertLabel(const std::string& label) {
+CONSTS::LABELS CONSTS::ConvertLabelName(const std::string& label) {
 	for(auto& [key, value] : LABEL_TO_ENUM) {
 		if(key == label)
 			return value;
 	}
 	throw std::runtime_error("ERROR: No label \"" + label + "\" found in LABEL_TO_ENUM");
+}
+
+std::string ConvertTableName(const CONSTS::TABLES& table) {
+	for(auto& [key, value] : TABLE_TO_ENUM){
+		if(value == table)
+			return key;
+	}
+	throw std::runtime_error("ERROR: No table with number " + std::to_string(table) + " found!");
+}
+
+CONSTS::TABLES ConvertTableName(const std::string& table) {
+	for(auto& [key, value] : TABLE_TO_ENUM) {
+		if(key == table)
+			return value;
+	}
+	throw std::runtime_error("ERROR: No table \"" + table + "\" found in TABLE_TO_ENUM");
 }
