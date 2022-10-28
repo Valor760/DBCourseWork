@@ -2,10 +2,14 @@
 
 #include <iostream>
 
+#include "constants.h"
+
 
 namespace App {
 MainApp::~MainApp() {
 	glfwDestroyWindow(m_Window);
+	ImGui_ImplGlfw_Shutdown();
+	ImGui::DestroyContext();
 }
 
 void MainApp::init() {
@@ -49,22 +53,34 @@ void MainApp::process_keys() {
 		glfwSetWindowShouldClose(m_Window, GLFW_TRUE);
 	}
 
-	// if(m_Keys[GLFW_KEY_LEFT_CONTROL] && m_Keys[glfwmouse])
+	if(m_Keys[GLFW_KEY_LEFT_CONTROL] && m_Keys[GLFW_KEY_EQUAL]) {
+		m_FontScale += 0.2;
+		if(m_FontScale > 3.0)
+			m_FontScale = 3.0;
+	}
+	if(m_Keys[GLFW_KEY_LEFT_CONTROL] && m_Keys[GLFW_KEY_MINUS]) {
+		m_FontScale -= 0.2;
+		if(m_FontScale < 0.5)
+			m_FontScale = 0.5;
+	}
 }
 
 void MainApp::run() {
 	while(!glfwWindowShouldClose(m_Window)) {
 		glfwPollEvents();
+		process_keys();
 		
 		gui::RenderBegin();
 		// FIXME: Transfer this to gui namespace somehow
-		run_main();
+		draw_side_panel_window();
+		draw_table_window();
+
 		gui::RenderEnd(m_Window, m_WindowWidth, m_WindowHeight);
 	}
 }
 
-void MainApp::run_main() {
-	// Flags for both windows
+
+void MainApp::draw_side_panel_window() {
 	ImGuiWindowFlags flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse;
 	
 	// Create side menu window
@@ -72,33 +88,83 @@ void MainApp::run_main() {
 	ImGui::SetNextWindowSize(ImVec2(SIDE_MENU_WIDTH, m_WindowHeight));
 	ImGui::Begin("Side Panel", nullptr, flags);
 
+	// Display all labels in side menu
+	for(auto& label : CONSTS::MENU_LABELS) {
+		if(ImGui::Selectable(label.c_str())) {
+			process_label(label);
+			break;
+		}
+	}
 
 	ImGui::End();
+
+}
+
+void MainApp::draw_table_window(const bool& is_active) {
+	ImGuiWindowFlags flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse;
 
 	// Create table window
 	ImGui::SetNextWindowSize(ImVec2(m_WindowWidth-SIDE_MENU_WIDTH, m_WindowHeight));
 	ImGui::SetNextWindowPos(ImVec2(SIDE_MENU_WIDTH, 0));
 	ImGui::Begin("Table Test", nullptr, flags);
-	ImGui::SetWindowFontScale(m_FontScale);
-	if (ImGui::BeginTable("table2", 3))
-        {	
+
+	// If table window is selected, then render tables in it
+	if(is_active) 
+	{
+		ImGui::SetWindowFontScale(m_FontScale);
+		if (ImGui::BeginTable("table2", 3))
+		{	
 			static char inputs[4][256];
-            for (int row = 0; row < 4; row++)
-            {
-                ImGui::TableNextRow();
-                ImGui::TableNextColumn();
+			for (int row = 0; row < 4; row++)
+			{
+				ImGui::TableNextRow();
+				ImGui::TableNextColumn();
 				
 				ImGui::PushID(row);
-                ImGui::InputText("Input me", inputs[row], IM_ARRAYSIZE(inputs[row]));
+				ImGui::InputText("Input me", inputs[row], IM_ARRAYSIZE(inputs[row]));
 				ImGui::PopID();
 
-                ImGui::TableNextColumn();
-                ImGui::Text("Some contents");
-                ImGui::TableNextColumn();
-                ImGui::Text("123.456");
-            }
-            ImGui::EndTable();
-        }
+				ImGui::TableNextColumn();
+				ImGui::Text("Some contents");
+				ImGui::TableNextColumn();
+				ImGui::Text("123.456");
+			}
+			ImGui::EndTable();
+		}
+	}
 	ImGui::End();
+	// ImGui::ShowDemoWindow();
+}
+
+void MainApp::process_label(const std::string& label) {
+	// FIXME: VEEEERY imperformant way to check
+	// TODO: Make a function with enums and use switch
+	if(label == CONSTS::LABEL_SHOW_TABLE) {
+		
+	}
+	else if (label == CONSTS::LABEL_INSERT_DATA) {
+
+	}
+	else if (label == CONSTS::LABEL_QUERY_1) {
+
+	}
+	else if (label == CONSTS::LABEL_QUERY_2) {
+		
+	}
+	else if (label == CONSTS::LABEL_QUERY_3) {
+		
+	}
+	else if (label == CONSTS::LABEL_QUERY_4) {
+		
+	}
+	else if (label == CONSTS::LABEL_QUERY_5) {
+		
+	}
+	else if (label == CONSTS::LABEL_QUERY_6) {
+		
+	}
+	else if (label == CONSTS::LABEL_REMOVE_DATA) {
+
+	}
 }
 } // namespace App
