@@ -1,6 +1,8 @@
 #pragma once
 #include <vector>
 #include <unordered_map>
+#include <stdexcept>
+#include <string>
 
 
 struct CONSTS {

@@ -88,16 +88,15 @@ void MainApp::draw_side_panel_window() {
 
 	ImGui::Begin("Side Panel", nullptr, flags);
 	ImGui::SetWindowFontScale(m_FontScale);
+	
 	// Display all labels in side menu
 	for(auto& label : CONSTS::MENU_LABELS) {
 		if(ImGui::Selectable(label.c_str())) {
 			m_CurrentLabel = CONSTS::ConvertLabelName(label);
-			break;
 		}
 	}
 
 	ImGui::End();
-
 }
 
 void MainApp::draw_table_window() {
@@ -125,7 +124,7 @@ void MainApp::draw_table() {
 	// Draw combobox with different table names
 	if(ImGui::BeginCombo("qwe", CONSTS::TABLE_NAMES[0].c_str())) {
 		for(auto& table : CONSTS::TABLE_NAMES) {
-			bool x;
+			bool x = false;
 			if(ImGui::Selectable(table.c_str(), x));
 		}
 		ImGui::EndCombo();
