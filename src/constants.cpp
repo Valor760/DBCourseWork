@@ -122,6 +122,31 @@ const std::string create_table_flightregister =
 	");"
 ;
 
+const std::string STR_LABEL_SHOW_TABLE			= "Show Table";
+const std::string STR_LABEL_INSERT_DATA			= "Insert Data";
+const std::string STR_LABEL_QUERY_1				= "Query N1";
+const std::string STR_LABEL_QUERY_2				= "Query N2";
+const std::string STR_LABEL_QUERY_3				= "Query N3";
+const std::string STR_LABEL_QUERY_4				= "Query N4";
+const std::string STR_LABEL_QUERY_5				= "Query N5";
+const std::string STR_LABEL_QUERY_6				= "Query N6";
+const std::string STR_LABEL_REMOVE_DATA			= "Remove Data";
+
+const std::unordered_map<std::string, CONSTS::LABELS> LABEL_TO_ENUM =
+	{
+		{STR_LABEL_SHOW_TABLE,		CONSTS::LABEL_SHOW_TABLE},
+		{STR_LABEL_INSERT_DATA,		CONSTS::LABEL_INSERT_DATA},
+		{STR_LABEL_QUERY_1,			CONSTS::LABEL_QUERY_1},
+		{STR_LABEL_QUERY_2,			CONSTS::LABEL_QUERY_2},
+		{STR_LABEL_QUERY_3,			CONSTS::LABEL_QUERY_3},
+		{STR_LABEL_QUERY_4,			CONSTS::LABEL_QUERY_4},
+		{STR_LABEL_QUERY_5,			CONSTS::LABEL_QUERY_5},
+		{STR_LABEL_QUERY_6,			CONSTS::LABEL_QUERY_6},
+		{STR_LABEL_REMOVE_DATA,		CONSTS::LABEL_REMOVE_DATA}
+	};
+
+
+// CONSTS struct stuff initialization
 const std::string CONSTS::TABLE_PASSENGERS			= "Passengers";
 const std::string CONSTS::TABLE_BAGGAGE				= "Baggage";
 const std::string CONSTS::TABLE_AIRPLANES			= "Airplanes";
@@ -130,17 +155,6 @@ const std::string CONSTS::TABLE_EMPLOYEES			= "Employees";
 const std::string CONSTS::TABLE_EMPLOYEEADDRESS		= "EmployeeAddress";
 const std::string CONSTS::TABLE_FLIGHTS				= "Flights";
 const std::string CONSTS::TABLE_FLIGHTREGISTER		= "FlightRegister";
-
-const std::string CONSTS::LABEL_SHOW_TABLE			= "Show Table";
-const std::string CONSTS::LABEL_INSERT_DATA			= "Insert Data";
-const std::string CONSTS::LABEL_QUERY_1				= "Query N1";
-const std::string CONSTS::LABEL_QUERY_2				= "Query N2";
-const std::string CONSTS::LABEL_QUERY_3				= "Query N3";
-const std::string CONSTS::LABEL_QUERY_4				= "Query N4";
-const std::string CONSTS::LABEL_QUERY_5				= "Query N5";
-const std::string CONSTS::LABEL_QUERY_6				= "Query N6";
-const std::string CONSTS::LABEL_REMOVE_DATA			= "Remove Data";
-
 
 const std::vector<std::string> CONSTS::ALL_CREATE_TABLES =
 	{
@@ -163,7 +177,23 @@ const std::unordered_map<std::string, int> CONSTS::TABLE_COLUMN_COUNT =
 
 const std::vector<std::string> CONSTS::MENU_LABELS = 
 	{
-		CONSTS::LABEL_SHOW_TABLE, CONSTS::LABEL_INSERT_DATA, CONSTS::LABEL_QUERY_1,
-		CONSTS::LABEL_QUERY_2, CONSTS::LABEL_QUERY_3, CONSTS::LABEL_QUERY_4,
-		CONSTS::LABEL_QUERY_5, CONSTS::LABEL_QUERY_6, CONSTS::LABEL_REMOVE_DATA
+		STR_LABEL_SHOW_TABLE,	STR_LABEL_INSERT_DATA,	STR_LABEL_QUERY_1,
+		STR_LABEL_QUERY_2,		STR_LABEL_QUERY_3,		STR_LABEL_QUERY_4,
+		STR_LABEL_QUERY_5,		STR_LABEL_QUERY_6,		STR_LABEL_REMOVE_DATA
 	};
+
+std::string CONSTS::ConvertLabel(const CONSTS::LABELS& label) {
+	for(auto& [key, value] : LABEL_TO_ENUM) {
+		if(value == label)
+			return key;
+	}
+	throw std::runtime_error("ERROR: No label with number " + std::to_string(label) + " found!");
+}
+
+CONSTS::LABELS CONSTS::ConvertLabel(const std::string& label) {
+	for(auto& [key, value] : LABEL_TO_ENUM) {
+		if(key == label)
+			return value;
+	}
+	throw std::runtime_error("ERROR: No label \"" + label + "\" found in LABEL_TO_ENUM");
+}

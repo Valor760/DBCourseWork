@@ -2,8 +2,6 @@
 
 #include <iostream>
 
-#include "constants.h"
-
 
 namespace App {
 MainApp::~MainApp() {
@@ -91,7 +89,7 @@ void MainApp::draw_side_panel_window() {
 	// Display all labels in side menu
 	for(auto& label : CONSTS::MENU_LABELS) {
 		if(ImGui::Selectable(label.c_str())) {
-			process_label(label);
+			m_CurrentLabel = CONSTS::ConvertLabel(label);
 			break;
 		}
 	}
@@ -100,71 +98,41 @@ void MainApp::draw_side_panel_window() {
 
 }
 
-void MainApp::draw_table_window(const bool& is_active) {
+void MainApp::draw_table_window() {
 	ImGuiWindowFlags flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse;
 
 	// Create table window
 	ImGui::SetNextWindowSize(ImVec2(m_WindowWidth-SIDE_MENU_WIDTH, m_WindowHeight));
 	ImGui::SetNextWindowPos(ImVec2(SIDE_MENU_WIDTH, 0));
 	ImGui::Begin("Table Test", nullptr, flags);
+	
+	switch(m_CurrentLabel) {
+		case CONSTS::LABEL_SHOW_TABLE:
+			ImGui::SetWindowFontScale(m_FontScale);
+			if (ImGui::BeginTable("table2", 3))
+			{	
+				static char inputs[4][256];
+				for (int row = 0; row < 4; row++)
+				{
+					ImGui::TableNextRow();
+					ImGui::TableNextColumn();
+					
+					ImGui::PushID(row);
+					ImGui::InputText("Input me", inputs[row], IM_ARRAYSIZE(inputs[row]));
+					ImGui::PopID();
 
-	// If table window is selected, then render tables in it
-	if(is_active) 
-	{
-		ImGui::SetWindowFontScale(m_FontScale);
-		if (ImGui::BeginTable("table2", 3))
-		{	
-			static char inputs[4][256];
-			for (int row = 0; row < 4; row++)
-			{
-				ImGui::TableNextRow();
-				ImGui::TableNextColumn();
-				
-				ImGui::PushID(row);
-				ImGui::InputText("Input me", inputs[row], IM_ARRAYSIZE(inputs[row]));
-				ImGui::PopID();
-
-				ImGui::TableNextColumn();
-				ImGui::Text("Some contents");
-				ImGui::TableNextColumn();
-				ImGui::Text("123.456");
+					ImGui::TableNextColumn();
+					ImGui::Text("Some contents");
+					ImGui::TableNextColumn();
+					ImGui::Text("123.456");
+				}
+				ImGui::EndTable();
 			}
-			ImGui::EndTable();
-		}
+			break;
+		default:
+			break;
 	}
 	ImGui::End();
 	// ImGui::ShowDemoWindow();
-}
-
-void MainApp::process_label(const std::string& label) {
-	// FIXME: VEEEERY imperformant way to check
-	// TODO: Make a function with enums and use switch
-	if(label == CONSTS::LABEL_SHOW_TABLE) {
-		
-	}
-	else if (label == CONSTS::LABEL_INSERT_DATA) {
-
-	}
-	else if (label == CONSTS::LABEL_QUERY_1) {
-
-	}
-	else if (label == CONSTS::LABEL_QUERY_2) {
-		
-	}
-	else if (label == CONSTS::LABEL_QUERY_3) {
-		
-	}
-	else if (label == CONSTS::LABEL_QUERY_4) {
-		
-	}
-	else if (label == CONSTS::LABEL_QUERY_5) {
-		
-	}
-	else if (label == CONSTS::LABEL_QUERY_6) {
-		
-	}
-	else if (label == CONSTS::LABEL_REMOVE_DATA) {
-
-	}
 }
 } // namespace App

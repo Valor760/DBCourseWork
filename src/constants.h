@@ -19,15 +19,19 @@ struct CONSTS {
 	static const std::string TABLE_FLIGHTREGISTER;
 
 	// Menu labels
-	static const std::string LABEL_SHOW_TABLE;
-	static const std::string LABEL_INSERT_DATA;
-	static const std::string LABEL_QUERY_1;
-	static const std::string LABEL_QUERY_2;
-	static const std::string LABEL_QUERY_3;
-	static const std::string LABEL_QUERY_4;
-	static const std::string LABEL_QUERY_5;
-	static const std::string LABEL_QUERY_6;
-	static const std::string LABEL_REMOVE_DATA;
+	enum LABELS {
+		LABEL_SHOW_TABLE,
+		LABEL_INSERT_DATA,
+		LABEL_QUERY_1,
+		LABEL_QUERY_2,
+		LABEL_QUERY_3,
+		LABEL_QUERY_4,
+		LABEL_QUERY_5,
+		LABEL_QUERY_6, 
+		LABEL_REMOVE_DATA,
 
-	
+		LABEL_NONE
+	};
+	static std::string ConvertLabel(const LABELS& label);
+	static LABELS ConvertLabel(const std::string& label);
 };
