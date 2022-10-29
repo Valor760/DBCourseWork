@@ -31,7 +31,7 @@ class MainApp {
 		void draw_side_panel_window();
 		void draw_table_window();
 		void draw_table();
-
+		
 
 	private:
 		DB::DataBase m_DB;

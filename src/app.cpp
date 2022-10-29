@@ -78,7 +78,6 @@ void MainApp::run() {
 	}
 }
 
-
 void MainApp::draw_side_panel_window() {
 	ImGuiWindowFlags flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse;
 	
@@ -102,7 +101,7 @@ void MainApp::draw_side_panel_window() {
 void MainApp::draw_table_window() {
 	ImGuiWindowFlags flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse;
 
-	// Create table window
+	// Create table(right) window
 	ImGui::SetNextWindowSize(ImVec2(m_WindowWidth-SIDE_MENU_WIDTH, m_WindowHeight));
 	ImGui::SetNextWindowPos(ImVec2(SIDE_MENU_WIDTH, 0));
 	ImGui::Begin("Table Test", nullptr, flags);
@@ -110,6 +109,18 @@ void MainApp::draw_table_window() {
 	switch(m_CurrentLabel) {
 		case CONSTS::LABEL_SHOW_TABLE:
 			draw_table();
+			break;
+		case CONSTS::LABEL_INSERT_DATA:
+			break;
+		// TODO: Make one function to execute user query based on label provided
+		case CONSTS::LABEL_QUERY_1:
+		case CONSTS::LABEL_QUERY_2:
+		case CONSTS::LABEL_QUERY_3:
+		case CONSTS::LABEL_QUERY_4:
+		case CONSTS::LABEL_QUERY_5:
+		case CONSTS::LABEL_QUERY_6:
+			break;
+		case CONSTS::LABEL_REMOVE_DATA:
 			break;
 		default:
 			break;
@@ -121,16 +132,31 @@ void MainApp::draw_table_window() {
 void MainApp::draw_table() {
 	ImGui::SetWindowFontScale(m_FontScale);
 
+	// Make combobox full table window width
+	ImGui::SetNextItemWidth(m_WindowWidth - SIDE_MENU_WIDTH - 15);
+
 	// Draw combobox with different table names
-	if(ImGui::BeginCombo("qwe", CONSTS::TABLE_NAMES[0].c_str())) {
-		for(auto& table : CONSTS::TABLE_NAMES) {
-			bool x = false;
-			if(ImGui::Selectable(table.c_str(), x));
+	static std::string current_table_name = CONSTS::TABLE_NAMES[0];
+	if(ImGui::BeginCombo("##Tables", current_table_name.c_str())) 
+	{
+		for(auto& table : CONSTS::TABLE_NAMES) 
+		{
+			const bool is_selected = (table == current_table_name);
+			if(ImGui::Selectable(table.c_str(), is_selected)) 
+			{
+				current_table_name = table;
+			}
+
+			// FIXME: What this does? Should it be in a program?
+			// if (is_selected) {
+			// 	ImGui::SetItemDefaultFocus();
+			// }
 		}
 		ImGui::EndCombo();
 	}
 
-	switch(m_CurrentTable) {
+	switch(m_CurrentTable) 
+	{
 		case CONSTS::TABLE_AIRPLANES:
 			break;
 		case CONSTS::TABLE_BAGGAGE:
