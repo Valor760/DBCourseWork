@@ -43,24 +43,30 @@ int DataBase::callback(void* data, int argc, char** argv, char** column_name) {
 	return -1;
 }
 
-int DataBase::execute(const std::string& query) {
+bool DataBase::execute(const std::string query, ...) {
 	if(query.empty()) {
 		std::cout << "ERROR: Execution query is empty!\n";
-		return -1;
+		return false;
 	}
 
 	empty_last_query();
+	
+	char buff[1024];
+	va_list ap;
+	va_start(ap, query);
+	vsnprintf(buff, 1024, query.c_str(), ap);
+	va_end(ap);
 
 	char* error_msg = nullptr;
-	if(sqlite3_exec(m_DB, query.c_str(), callback, nullptr, &error_msg) != SQLITE_OK) {
+	if(sqlite3_exec(m_DB, buff, callback, nullptr, &error_msg) != SQLITE_OK) {
 		std::cout << "An error while executing SQL statement occurred!\n"
 			<< "SQL: " << query << '\n'
 			<< "Error msg: " << error_msg << '\n';
 		sqlite3_free(error_msg);
-		return -1;
+		return false;
 	}
 	else {
-		return 0;
+		return true;
 	}
 }
 
@@ -86,8 +92,8 @@ void DataBase::empty_last_query() {
 
 void DataBase::create_tables() {
 	for(auto& query : CONSTS::ALL_CREATE_TABLES) {
-		if(execute(query) != 0) {
-			break;
+		if(!execute(query)) {
+			throw std::runtime_error("Error creating tables!");
 		}
 	}
 }

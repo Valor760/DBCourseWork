@@ -1,6 +1,8 @@
 #include "sqlite3.h"
 
-#include <string.h>
+#include <string>
+// #include <stdio.h>
+// #include <stdarg.h>
 #include <iostream>
 #include <vector>
 
@@ -20,7 +22,7 @@ class DataBase {
 		// Initialize database and tables
 		void init();
 		void init(std::string db_path);
-		int execute(const std::string& query);
+		bool execute(const std::string query, ...);
 
 		// Returns m_LastQuery_Values
 		auto& get_last_query_result() const;

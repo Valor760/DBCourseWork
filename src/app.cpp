@@ -136,15 +136,14 @@ void MainApp::draw_table() {
 	ImGui::SetNextItemWidth(m_WindowWidth - SIDE_MENU_WIDTH - 15);
 
 	// Draw combobox with different table names
-	static std::string current_table_name = CONSTS::TABLE_NAMES[0];
-	if(ImGui::BeginCombo("##Tables", current_table_name.c_str())) 
+	if(ImGui::BeginCombo("##Tables", m_CurrentTable.c_str())) 
 	{
 		for(auto& table : CONSTS::TABLE_NAMES) 
 		{
-			const bool is_selected = (table == current_table_name);
+			const bool is_selected = (table == m_CurrentTable);
 			if(ImGui::Selectable(table.c_str(), is_selected)) 
 			{
-				current_table_name = table;
+				m_CurrentTable = table;
 			}
 
 			// FIXME: What this does? Should it be in a program?
@@ -155,25 +154,11 @@ void MainApp::draw_table() {
 		ImGui::EndCombo();
 	}
 
-	switch(m_CurrentTable) 
-	{
-		case CONSTS::TABLE_AIRPLANES:
-			break;
-		case CONSTS::TABLE_BAGGAGE:
-			break;
-		case CONSTS::TABLE_EMPLOYEEADDRESS:
-			break;
-		case CONSTS::TABLE_EMPLOYEES:
-			break;
-		case CONSTS::TABLE_FLIGHTREGISTER:
-			break;
-		case CONSTS::TABLE_FLIGHTS:
-			break;
-		case CONSTS::TABLE_HANGARS:
-			break;
-		case CONSTS::TABLE_PASSENGERS:
-			break;
+	if(m_CurrentTable != m_LastTable) {
+		m_LastTable = m_CurrentTable;
+		m_DB.execute("SELECT * FROM %s", m_CurrentTable.c_str());
 	}
+	// TODO: Show table if not empty
 
 // if (ImGui::BeginTable("table2", 3))
 // 	{	

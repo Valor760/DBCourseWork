@@ -15,9 +15,6 @@ class MainApp {
 		MainApp() : m_DB() {};
 		~MainApp();
 		
-		// Initialize all program components
-		//
-		// return 0 if success, -1 otherwise
 		void init();
 		void run();
 
@@ -31,7 +28,7 @@ class MainApp {
 		void draw_side_panel_window();
 		void draw_table_window();
 		void draw_table();
-		
+
 
 	private:
 		DB::DataBase m_DB;
@@ -45,6 +42,7 @@ class MainApp {
 
 		// ImGuiIO* m_IO = nullptr;
 		CONSTS::LABELS m_CurrentLabel = CONSTS::LABEL_SHOW_TABLE;
-		CONSTS::TABLES m_CurrentTable = CONSTS::TABLE_PASSENGERS;
+		std::string m_CurrentTable = CONSTS::TABLE_NAMES[0];
+		std::string m_LastTable = "";
 };
 } // namespace App
