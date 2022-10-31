@@ -63,6 +63,7 @@ bool DataBase::execute(const std::string query, ...) {
 		std::cout << "An error while executing SQL statement occurred!\n"
 			<< "SQL: " << query << '\n'
 			<< "Error msg: " << error_msg << '\n';
+		m_LastErrorMsg = std::string(error_msg);
 		sqlite3_free(error_msg);
 		return false;
 	}
