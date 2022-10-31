@@ -232,6 +232,9 @@ void MainApp::insert_data() {
 		// Add button
 
 		if(ImGui::Button("Insert to Table", ImVec2(-FLT_MIN, 0))) {
+			auto qwe = CONSTS::ConvertTableName(m_CurrentTable);
+			m_DB.execute("INSERT INTO %s VALUES (" + CONSTS::TableInsertFormat(qwe)+")", "Baggage", "112", "2.33", "TRUE", "NULL");
+
 			// Clear input row
 			for(auto& arr : m_InputFields) {
 				memset(arr, 0, 256);

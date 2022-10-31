@@ -2,6 +2,7 @@
 
 #include <string>
 #include <iostream>
+#include <stdexcept>
 #include <vector>
 
 // #define TABLE_COLUMN_DELIMITER ";;;"

@@ -219,7 +219,7 @@ CONSTS::LABELS CONSTS::ConvertLabelName(const std::string& label) {
 	throw std::runtime_error("ERROR: No label \"" + label + "\" found in LABEL_TO_ENUM");
 }
 
-std::string ConvertTableName(const CONSTS::TABLES& table) {
+std::string CONSTS::ConvertTableName(const CONSTS::TABLES& table) {
 	for(auto& [key, value] : TABLE_TO_ENUM){
 		if(value == table)
 			return key;
@@ -227,10 +227,29 @@ std::string ConvertTableName(const CONSTS::TABLES& table) {
 	throw std::runtime_error("ERROR: No table with number " + std::to_string(table) + " found!");
 }
 
-CONSTS::TABLES ConvertTableName(const std::string& table) {
+CONSTS::TABLES CONSTS::ConvertTableName(const std::string& table) {
 	for(auto& [key, value] : TABLE_TO_ENUM) {
 		if(key == table)
 			return value;
 	}
 	throw std::runtime_error("ERROR: No table \"" + table + "\" found in TABLE_TO_ENUM");
+}
+
+std::string CONSTS::TableInsertFormat(CONSTS::TABLES table_name) {
+	switch(table_name) {
+		case CONSTS::TABLE_AIRPLANES:
+			return "%s, %s, %s, %s";
+		case CONSTS::TABLE_BAGGAGE:
+			return "%s, %s, %s, %s";
+		case CONSTS::TABLE_EMPLOYEEADDRESS:
+			return "%s, %s, %s, %s, %s, %s";
+		case CONSTS::TABLE_EMPLOYEES:
+			return "%s, %s, %s, %s, %s, %s, %s, %s, %s, %s";
+		// case CONSTS::TABLE_FLIGHTREGISTER:
+		// case CONSTS::TABLE_FLIGHTS:
+		// case CONSTS::TABLE_HANGARS:
+		// case CONSTS::TABLE_PASSENGERS:
+		default:
+			return "";
+	}
 }

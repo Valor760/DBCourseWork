@@ -2,6 +2,7 @@
 #include <vector>
 #include <unordered_map>
 #include <string>
+#include <stdexcept>
 
 
 struct CONSTS {
@@ -40,4 +41,5 @@ struct CONSTS {
 	};
 	static std::string ConvertLabelName(const LABELS& label);
 	static LABELS ConvertLabelName(const std::string& label);
+	static std::string TableInsertFormat(TABLES table_name);
 };
