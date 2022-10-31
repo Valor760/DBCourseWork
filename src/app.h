@@ -4,6 +4,8 @@
 #include "database.h"
 #include "constants.h"
 
+#include <array>
+
 #define SIDE_MENU_WIDTH 200
 #define FONT_SCALE_MAX 2.5
 #define FONT_SCALE_MIN 0.5
@@ -28,6 +30,8 @@ class MainApp {
 		void draw_side_panel_window();
 		void draw_table_window();
 		void draw_table();
+		void insert_data();
+		void draw_table_combobox();
 
 
 	private:
@@ -44,5 +48,12 @@ class MainApp {
 		CONSTS::LABELS m_CurrentLabel = CONSTS::LABEL_SHOW_TABLE;
 		std::string m_CurrentTable = CONSTS::TABLE_NAMES[0];
 		std::string m_LastTable = "";
+
+		bool m_InsertRow = false;
+
+		// Initialize static char arrays for input on heap
+		// 256 characters will be enough, right?
+		// FIXME: Hardcoded buffers. Make dynamic buffers.
+		std::array<char*, 16> m_InputFields;
 };
 } // namespace App

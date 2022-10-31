@@ -15,6 +15,13 @@ void MainApp::init() {
 	gui::Init(m_Window);//, m_IO);
 
 	m_DB.init();
+
+	// Allocate all m_InputFields
+	// FIXME: MAKE CLEANUP!!!! AND MAKE BETTER
+	for(auto& arr : m_InputFields) {
+		arr = new char[256];
+		memset(arr, 0, 256);
+	}
 }
 
 void MainApp::init_opengl() {
@@ -105,12 +112,15 @@ void MainApp::draw_table_window() {
 	ImGui::SetNextWindowSize(ImVec2(m_WindowWidth-SIDE_MENU_WIDTH, m_WindowHeight));
 	ImGui::SetNextWindowPos(ImVec2(SIDE_MENU_WIDTH, 0));
 	ImGui::Begin("Table Test", nullptr, flags);
+	ImGui::SetWindowFontScale(m_FontScale);
 	
 	switch(m_CurrentLabel) {
 		case CONSTS::LABEL_SHOW_TABLE:
+			draw_table_combobox();
 			draw_table();
 			break;
 		case CONSTS::LABEL_INSERT_DATA:
+			insert_data();
 			break;
 		// TODO: Make one function to execute user query based on label provided
 		case CONSTS::LABEL_QUERY_1:
@@ -129,11 +139,10 @@ void MainApp::draw_table_window() {
 	// ImGui::ShowDemoWindow();
 }
 
-void MainApp::draw_table() {
-	ImGui::SetWindowFontScale(m_FontScale);
-
+void MainApp::draw_table_combobox() {
 	// Make combobox full table window width
 	ImGui::SetNextItemWidth(m_WindowWidth - SIDE_MENU_WIDTH - 15);
+	// m_InsertRow = false; // Disable row insertion if the table is changed
 
 	// Draw combobox with different table names
 	if(ImGui::BeginCombo("##Tables", m_CurrentTable.c_str())) 
@@ -153,10 +162,12 @@ void MainApp::draw_table() {
 		}
 		ImGui::EndCombo();
 	}
+}
 
+void MainApp::draw_table() {
 	if(m_CurrentTable != m_LastTable) {
+		m_DB.execute("SELECT * FROM %s", m_CurrentTable.c_str());
 		m_LastTable = m_CurrentTable;
-		m_DB.execute("SELECT * FROM %s", m_LastTable.data());
 	}
 
 	if(m_DB.GetLastQueryResult().empty()) {
@@ -166,14 +177,20 @@ void MainApp::draw_table() {
 		auto query_columns = m_DB.GetLastQueryColumns();
 		auto query_rows = m_DB.GetLastQueryResult();
 
-		if(ImGui::BeginTable("##DBTable", query_columns.size())) {
-			for(auto& column_name : query_columns) {
+		// Draw table with data
+		if(ImGui::BeginTable("##DBTable", query_columns.size())) 
+		{	
+			// Print headers
+			for(auto& column_name : query_columns) 
+			{
 				ImGui::TableSetupColumn(column_name.c_str());
 			}
 			ImGui::TableHeadersRow();
-			for(auto& row : query_rows) {
+			for(auto& row : query_rows)
+			{
 				ImGui::TableNextRow();
-				for(auto& record : row) {
+				for(auto& record : row)
+				{
 					ImGui::TableNextColumn();
 					ImGui::Text(record.c_str());
 				}
@@ -181,26 +198,48 @@ void MainApp::draw_table() {
 			ImGui::EndTable();
 		}
 	}
-	// TODO: Show table if not empty
+}
 
-// if (ImGui::BeginTable("table2", 3))
-// 	{	
-// 		static char inputs[4][256];
-// 		for (int row = 0; row < 4; row++)
-// 		{
-// 			ImGui::TableNextRow();
-// 			ImGui::TableNextColumn();
-			
-// 			ImGui::PushID(row);
-// 			ImGui::InputText("Input me", inputs[row], IM_ARRAYSIZE(inputs[row]));
-// 			ImGui::PopID();
+void MainApp::insert_data() {
+	draw_table_combobox();
+	ImGui::Spacing();
 
-// 			ImGui::TableNextColumn();
-// 			ImGui::Text("Some contents");
-// 			ImGui::TableNextColumn();
-// 			ImGui::Text("123.456");
-// 		}
-// 		ImGui::EndTable();
-// 	}
+	auto query_columns = m_DB.GetLastQueryColumns();
+
+	if(query_columns.empty())
+	{
+		m_DB.execute("SELECT * FROM %s", m_CurrentTable.c_str());
+	}
+
+	// Draw columns for insert
+	if(ImGui::BeginTable("##TableInsert", query_columns.size()))
+	{
+		for(auto& column_name : query_columns) {
+			ImGui::TableSetupColumn(column_name.c_str());
+		}
+		ImGui::TableHeadersRow();
+
+		for(int cell_idx = 0; cell_idx < query_columns.size(); cell_idx++) {
+			ImGui::TableNextColumn();
+			ImGui::SetNextItemWidth(-FLT_MIN);
+			ImGui::PushID(cell_idx);
+			ImGui::InputText("##cell", m_InputFields[cell_idx], 256);
+			ImGui::PopID();
+		}
+
+		ImGui::EndTable();
+
+		// Add button
+
+		if(ImGui::Button("Insert to Table", ImVec2(-FLT_MIN, 0))) {
+			// Clear input row
+			for(auto& arr : m_InputFields) {
+				memset(arr, 0, 256);
+			}
+		}
+		ImGui::Spacing();
+	}
+
+	draw_table();
 }
 } // namespace App
