@@ -156,7 +156,30 @@ void MainApp::draw_table() {
 
 	if(m_CurrentTable != m_LastTable) {
 		m_LastTable = m_CurrentTable;
-		m_DB.execute("SELECT * FROM %s", m_CurrentTable.c_str());
+		m_DB.execute("SELECT * FROM %s", m_LastTable.data());
+	}
+
+	if(m_DB.GetLastQueryResult().empty()) {
+		ImGui::Text("No data available in this table! Please insert data...");
+	}
+	else {
+		auto query_columns = m_DB.GetLastQueryColumns();
+		auto query_rows = m_DB.GetLastQueryResult();
+
+		if(ImGui::BeginTable("##DBTable", query_columns.size())) {
+			for(auto& column_name : query_columns) {
+				ImGui::TableSetupColumn(column_name.c_str());
+			}
+			ImGui::TableHeadersRow();
+			for(auto& row : query_rows) {
+				ImGui::TableNextRow();
+				for(auto& record : row) {
+					ImGui::TableNextColumn();
+					ImGui::Text(record.c_str());
+				}
+			}
+			ImGui::EndTable();
+		}
 	}
 	// TODO: Show table if not empty
 

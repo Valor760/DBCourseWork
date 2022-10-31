@@ -1,8 +1,6 @@
 #include "sqlite3.h"
 
 #include <string>
-// #include <stdio.h>
-// #include <stdarg.h>
 #include <iostream>
 #include <vector>
 
@@ -25,21 +23,24 @@ class DataBase {
 		bool execute(const std::string query, ...);
 
 		// Returns m_LastQuery_Values
-		auto& get_last_query_result() const;
+		const std::vector<std::vector<std::string>>& GetLastQueryResult() const;
 		// Returns m_LastQuery_Columns
-		auto& get_last_query_columns() const;
+		const std::vector<std::string>& GetLastQueryColumns() const;
+		const std::string& GetLastErrorMsg() const;
 
-		// Empties m_LastQuery_Columns and m_LastQuery_Values
-		void empty_last_query();
 	
 	private:
 		static int callback(void* data, int argc, char** argv, char** column_name);
 		void create_tables();
+		// Empties m_LastQuery_Columns and m_LastQuery_Values
+		void empty_last_query();
 
 	private:
 		sqlite3* m_DB = nullptr;
 
 		static inline std::vector<std::string> m_LastQuery_Columns;
 		static inline std::vector<std::vector<std::string>> m_LastQuery_Values;
+		std::string m_LastErrorMsg = "";
+
 };
 } // namespace DB

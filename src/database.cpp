@@ -35,7 +35,8 @@ int DataBase::callback(void* data, int argc, char** argv, char** column_name) {
 
 		std::vector<std::string> curr_row;
 		for(int i = 0; i < argc; i++) {
-			curr_row.push_back(std::string(argv[i]));
+			// Sqlite returns 'NULL' as 0x0, so a check is needed
+			curr_row.push_back(std::string(argv[i] == NULL ? "NULL" : argv[i]));
 		}
 		m_LastQuery_Values.push_back(curr_row);
 		return 0;
@@ -54,7 +55,7 @@ bool DataBase::execute(const std::string query, ...) {
 	char buff[1024];
 	va_list ap;
 	va_start(ap, query);
-	vsnprintf(buff, 1024, query.c_str(), ap);
+	vsnprintf(buff, 1024, query.data(), ap);
 	va_end(ap);
 
 	char* error_msg = nullptr;
@@ -70,11 +71,11 @@ bool DataBase::execute(const std::string query, ...) {
 	}
 }
 
-auto& DataBase::get_last_query_result() const {
+const std::vector<std::vector<std::string>>& DataBase::GetLastQueryResult() const {
 	return m_LastQuery_Values;
 }
 
-auto& DataBase::get_last_query_columns() const {
+const std::vector<std::string>& DataBase::GetLastQueryColumns() const {
 	return m_LastQuery_Columns;
 }
 
@@ -96,5 +97,9 @@ void DataBase::create_tables() {
 			throw std::runtime_error("Error creating tables!");
 		}
 	}
+}
+
+const std::string& DataBase::GetLastErrorMsg() const {
+	return m_LastErrorMsg;
 }
 } // namespace DB
