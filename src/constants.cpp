@@ -245,10 +245,14 @@ std::string CONSTS::TableInsertFormat(CONSTS::TABLES table_name) {
 			return "%s, %s, %s, %s, %s, %s";
 		case CONSTS::TABLE_EMPLOYEES:
 			return "%s, %s, %s, %s, %s, %s, %s, %s, %s, %s";
-		// case CONSTS::TABLE_FLIGHTREGISTER:
-		// case CONSTS::TABLE_FLIGHTS:
-		// case CONSTS::TABLE_HANGARS:
-		// case CONSTS::TABLE_PASSENGERS:
+		case CONSTS::TABLE_FLIGHTREGISTER:
+			return "%s, %s";
+		case CONSTS::TABLE_FLIGHTS:
+			return "%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s";
+		case CONSTS::TABLE_HANGARS:
+			return "%s, %s, %s";
+		case CONSTS::TABLE_PASSENGERS:
+			return "%s, %s, %s, %s, %s";
 		default:
 			return "";
 	}

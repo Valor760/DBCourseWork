@@ -206,13 +206,13 @@ void MainApp::insert_data() {
 
 	auto query_columns = m_DB.GetLastQueryColumns();
 
-	if(query_columns.empty())
+	if(query_columns.empty() && m_CurrentTable != m_LastTable)
 	{
 		m_DB.execute("SELECT * FROM %s", m_CurrentTable.c_str());
 	}
 
 	// Draw columns for insert
-	if(ImGui::BeginTable("##TableInsert", query_columns.size()))
+	if(query_columns.size() > 0 && ImGui::BeginTable("##TableInsert", query_columns.size()))
 	{
 		for(auto& column_name : query_columns) {
 			ImGui::TableSetupColumn(column_name.c_str());
@@ -229,11 +229,10 @@ void MainApp::insert_data() {
 
 		ImGui::EndTable();
 
-		// Add button
-
+		// Insert data into table
 		if(ImGui::Button("Insert to Table", ImVec2(-FLT_MIN, 0))) {
-			auto qwe = CONSTS::ConvertTableName(m_CurrentTable);
-			m_DB.execute("INSERT INTO %s VALUES (" + CONSTS::TableInsertFormat(qwe)+")", "Baggage", "112", "2.33", "TRUE", "NULL");
+			auto table_enum = CONSTS::ConvertTableName(m_CurrentTable);
+			m_DB.execute("INSERT INTO %s VALUES (" + CONSTS::TableInsertFormat(table_enum)+")", m_CurrentTable);
 
 			// Clear input row
 			for(auto& arr : m_InputFields) {
