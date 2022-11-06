@@ -32,6 +32,7 @@ class MainApp {
 		void draw_table();
 		void insert_data();
 		void draw_table_combobox();
+		void insert_button_click(const bool& id_col_active = false);
 
 
 	private:
@@ -49,7 +50,13 @@ class MainApp {
 		std::string m_CurrentTable = CONSTS::TABLE_NAMES[0];
 		std::string m_LastTable = "";
 
-		bool m_InsertRow = false;
+		bool m_ReceivedColNames = false;
+
+		// FIXME: We have the same fields in DB class, but they are always rewritten
+		// These fields needed for insert-draw functions to work properly
+		// otherwise a query spam to DB happens
+		std::vector<std::vector<std::string>> m_LastQuery_Rows = {};
+		std::vector<std::string> m_LastQuery_Columns = {};
 
 		// Initialize static char arrays for input on heap
 		// 256 characters will be enough, right?

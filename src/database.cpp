@@ -39,9 +39,8 @@ int DataBase::callback(void* data, int argc, char** argv, char** column_name) {
 			curr_row.push_back(std::string(argv[i] == NULL ? "NULL" : argv[i]));
 		}
 		m_LastQuery_Values.push_back(curr_row);
-		return 0;
 	}
-	return -1;
+	return 0;
 }
 
 bool DataBase::execute(const std::string query, ...) {
@@ -55,13 +54,13 @@ bool DataBase::execute(const std::string query, ...) {
 	char buff[1024];
 	va_list ap;
 	va_start(ap, query);
-	vsnprintf(buff, 1024, query.data(), ap);
+	vsnprintf(buff, 1024, query.c_str(), ap);
 	va_end(ap);
 
 	char* error_msg = nullptr;
 	if(sqlite3_exec(m_DB, buff, callback, nullptr, &error_msg) != SQLITE_OK) {
 		std::cout << "An error while executing SQL statement occurred!\n"
-			<< "SQL: " << query << '\n'
+			<< "SQL: " << buff << '\n'
 			<< "Error msg: " << error_msg << '\n';
 		m_LastErrorMsg = std::string(error_msg);
 		sqlite3_free(error_msg);
@@ -102,5 +101,12 @@ void DataBase::create_tables() {
 
 const std::string& DataBase::GetLastErrorMsg() const {
 	return m_LastErrorMsg;
+}
+
+std::vector<std::vector<std::string>> DataBase::GetTableInfo(const std::string& table_name) {
+	if(!execute("PRAGMA table_info( %s );", table_name.c_str())) {
+		std::cout << "ERROR: Couldn't get table_info for \"" << table_name << "\" table!";
+	}
+	return m_LastQuery_Values;
 }
 } // namespace DB

@@ -8,3 +8,7 @@
 - [x] Add constants
 	- [x] Add table names
 	- [x] Add column count to each table (maybe do this in map?)
+
+- [x] Figure out the way to get column names(and count) when table is empty
+	- [-] Can do hardcode with constants but that's cringe
+	- [x] I can use "PRAGMA table_info( your_table_name );" but need to figure out how to parse it
