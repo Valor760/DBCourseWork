@@ -120,6 +120,7 @@ void MainApp::draw_table_window() {
 			draw_table();
 			break;
 		case CONSTS::LABEL_INSERT_DATA:
+			draw_table_combobox();
 			insert_data();
 			break;
 		// TODO: Make one function to execute user query based on label provided
@@ -167,26 +168,25 @@ void MainApp::draw_table_combobox() {
 void MainApp::draw_table() {
 	if(m_CurrentTable != m_LastTable) {
 		m_DB.execute("SELECT * FROM %s", m_CurrentTable.c_str());
+		m_LastQuery_Columns = m_DB.GetLastQueryColumns();
+		m_LastQuery_Rows = m_DB.GetLastQueryResult();
 		m_LastTable = m_CurrentTable;
 	}
 
-	if(m_DB.GetLastQueryResult().empty()) {
+	if(m_LastQuery_Rows.empty()) {
 		ImGui::Text("No data available in this table! Please insert data...");
 	}
 	else {
-		auto query_columns = m_DB.GetLastQueryColumns();
-		auto query_rows = m_DB.GetLastQueryResult();
-
 		// Draw table with data
-		if(ImGui::BeginTable("##DBTable", query_columns.size())) 
+		if(ImGui::BeginTable("##DBTable", m_LastQuery_Columns.size())) 
 		{	
 			// Print headers
-			for(auto& column_name : query_columns) 
+			for(auto& column_name : m_LastQuery_Columns) 
 			{
 				ImGui::TableSetupColumn(column_name.c_str());
 			}
 			ImGui::TableHeadersRow();
-			for(auto& row : query_rows)
+			for(auto& row : m_LastQuery_Rows)
 			{
 				ImGui::TableNextRow();
 				for(auto& record : row)
@@ -201,48 +201,74 @@ void MainApp::draw_table() {
 }
 
 void MainApp::insert_data() {
-	draw_table_combobox();
-	ImGui::Spacing();
+	// ImGui::Spacing();
 
-	auto query_columns = m_DB.GetLastQueryColumns();
+	if(m_CurrentTable != m_LastTable) {
+		m_ReceivedColNames = false;
+	} 
 
-	if(query_columns.empty())
-	{
-		m_DB.execute("SELECT * FROM %s", m_CurrentTable.c_str());
+	static std::vector<std::vector<std::string>> table_info;	
+	if(!m_ReceivedColNames) {
+		table_info = m_DB.GetTableInfo(m_CurrentTable);
+		m_LastTable = m_CurrentTable;
+		m_ReceivedColNames = true;
 	}
 
 	// Draw columns for insert
-	if(ImGui::BeginTable("##TableInsert", query_columns.size()))
+	if(table_info.size() && ImGui::BeginTable("##TableInsert", table_info.size()))
 	{
-		for(auto& column_name : query_columns) {
-			ImGui::TableSetupColumn(column_name.c_str());
+		for(auto& column_name : table_info) {
+			ImGui::TableSetupColumn(column_name[1].c_str());
 		}
 		ImGui::TableHeadersRow();
 
-		for(int cell_idx = 0; cell_idx < query_columns.size(); cell_idx++) {
+		bool id_col_active = false;
+		if(m_CurrentTable == "Employee" || m_CurrentTable == "Hangar" || m_CurrentTable == "Airlane") {
+			id_col_active = true;
+		}
+		for(int cell_idx = 0; cell_idx < table_info.size(); cell_idx++) {
 			ImGui::TableNextColumn();
 			ImGui::SetNextItemWidth(-FLT_MIN);
 			ImGui::PushID(cell_idx);
-			ImGui::InputText("##cell", m_InputFields[cell_idx], 256);
+			ImGui::InputText("##cell", m_InputFields[cell_idx], 256, 
+							(!id_col_active && cell_idx == 0) ? ImGuiInputTextFlags_ReadOnly : 0);
 			ImGui::PopID();
 		}
 
 		ImGui::EndTable();
 
-		// Add button
-
+		// Insertion button
 		if(ImGui::Button("Insert to Table", ImVec2(-FLT_MIN, 0))) {
-			auto qwe = CONSTS::ConvertTableName(m_CurrentTable);
-			m_DB.execute("INSERT INTO %s VALUES (" + CONSTS::TableInsertFormat(qwe)+")", "Baggage", "112", "2.33", "TRUE", "NULL");
-
-			// Clear input row
-			for(auto& arr : m_InputFields) {
-				memset(arr, 0, 256);
-			}
+			insert_button_click(id_col_active);
 		}
 		ImGui::Spacing();
 	}
 
 	draw_table();
+}
+
+void MainApp::insert_button_click(const bool& id_col_active) {
+	std::string values = "", columns = "";
+	// It will be always executed after MainApp::insert_data
+	// which executes table info
+	auto table_info = m_DB.GetTableInfo(m_CurrentTable);
+	const int column_count = table_info.size();
+	int start_idx = id_col_active ? 0 : 1;
+
+	for(int i = start_idx; i < column_count; i++) {
+		std::string value = m_InputFields[i];
+		values += std::string(value.empty() ? "NULL" : ("\"" + value + "\"")) + ",";
+		columns += table_info[i][1] + ",";
+	}
+	// Always remove last comma
+	values.pop_back();
+	columns.pop_back();
+
+	m_DB.execute("INSERT INTO %s(%s) VALUES (%s);", m_CurrentTable.c_str(), columns.c_str(), values.c_str());
+
+	// Clear input row after insertion
+	for(auto& arr : m_InputFields) {
+		memset(arr, 0, 256);
+	}
 }
 } // namespace App

@@ -2,7 +2,7 @@
 
 
 const std::string create_table_passengers =
-	"CREATE TABLE IF NOT EXISTS Passengers ("
+	"CREATE TABLE IF NOT EXISTS Passenger ("
 	"P_ID INTEGER PRIMARY KEY AUTOINCREMENT,"
 	"P_Name TEXT NOT NULL,"
 	"P_Surname TEXT NOT NULL,"
@@ -20,12 +20,12 @@ const std::string create_table_baggage =
 	"P_ID INTEGER,"
 	
 	"CHECK(B_Weight_KG < 10),"
-	"FOREIGN KEY (P_ID) REFERENCES Passengers(P_ID)"
+	"FOREIGN KEY (P_ID) REFERENCES Passenger(P_ID)"
 	");"
 ;
 
 const std::string create_table_airplanes = 
-	"CREATE TABLE IF NOT EXISTS Airplanes ("
+	"CREATE TABLE IF NOT EXISTS Airplane ("
 	"Plane_ID TEXT PRIMARY KEY,"
 	"Plane_Capacity INTEGER NOT NULL,"
 	"Plane_Type TEXT NOT NULL,"
@@ -39,18 +39,18 @@ const std::string create_table_airplanes =
 ;
 
 const std::string create_table_hangars =
-	"CREATE TABLE IF NOT EXISTS Hangars ("
+	"CREATE TABLE IF NOT EXISTS Hangar ("
 	"H_ID TEXT PRIMARY KEY,"
 	"H_Size INTEGER NOT NULL,"
 	"Plane_ID TEXT,"
 	
 	"CHECK(length(H_ID) = 3 AND length(Plane_ID) = 10),"
-	"FOREIGN KEY (Plane_ID) REFERENCES Airplanes(Plane_ID)"
+	"FOREIGN KEY (Plane_ID) REFERENCES Airplane(Plane_ID)"
 	");"
 ;
 
 const std::string create_table_employees = 
-	"CREATE TABLE IF NOT EXISTS Employees ("
+	"CREATE TABLE IF NOT EXISTS Employee ("
 	"Emp_ID TEXT PRIMARY KEY,"
 	"Emp_Name TEXT NOT NULL,"
 	"Emp_Surname TEXT NOT NULL,"
@@ -66,7 +66,7 @@ const std::string create_table_employees =
 	"CHECK(H_ID IS NULL OR (length(H_ID) = 3 AND H_ID IS NOT NULL)),"
 	"CHECK(Emp_Position IN (\"Pilot\", \"Stewardess\", \"Technician\", \"Cashier\", \"Worker\")),"
 	"CHECK(Emp_Gender IN (\"M\", \"F\")),"
-	"FOREIGN KEY (H_ID) REFERENCES Hangars(H_ID)"
+	"FOREIGN KEY (H_ID) REFERENCES Hangar(H_ID)"
 	");"
 ;
 
@@ -80,12 +80,12 @@ const std::string create_table_employeeaddress =
 	"Ad_Post_Code TEXT,"
 	
 	"CHECK(length(Emp_ID) = 4),"
-	"FOREIGN KEY (Emp_ID) REFERENCES Employees (Emp_ID)"
+	"FOREIGN KEY (Emp_ID) REFERENCES Employee(Emp_ID)"
 	");"
 ;
 
 const std::string create_table_flights = 
-	"CREATE TABLE IF NOT EXISTS Flights ("
+	"CREATE TABLE IF NOT EXISTS Flight ("
 	"FL_ID INTEGER PRIMARY KEY AUTOINCREMENT,"
 	"FL_Takeoff_City TEXT NOT NULL,"
 	"FL_Land_City TEXT NOT NULL,"
@@ -103,12 +103,12 @@ const std::string create_table_flights =
 	"CHECK(FL_Takeoff_City NOT IN (\"Rome\", \"Moscow\", \"London\")),"
 	"CHECK(FL_Land_City NOT IN (\"Rome\", \"Moscow\", \"London\")),"
 	
-	"FOREIGN KEY (Pilot_One_ID) REFERENCES Employees(Emp_ID),"
-	"FOREIGN KEY (Pilot_Two_ID) REFERENCES Employees(Emp_ID),"
-	"FOREIGN KEY (Stew_One_ID) REFERENCES Employees(Emp_ID),"
-	"FOREIGN KEY (Stew_Two_ID) REFERENCES Employees(Emp_ID),"
-	"FOREIGN KEY (Stew_Three_ID) REFERENCES Employees(Emp_ID),"
-	"FOREIGN KEY (Plane_ID) REFERENCES Planes(Plane_ID)"
+	"FOREIGN KEY (Pilot_One_ID) REFERENCES Employee(Emp_ID),"
+	"FOREIGN KEY (Pilot_Two_ID) REFERENCES Employee(Emp_ID),"
+	"FOREIGN KEY (Stew_One_ID) REFERENCES Employee(Emp_ID),"
+	"FOREIGN KEY (Stew_Two_ID) REFERENCES Employee(Emp_ID),"
+	"FOREIGN KEY (Stew_Three_ID) REFERENCES Employee(Emp_ID),"
+	"FOREIGN KEY (Plane_ID) REFERENCES Plane(Plane_ID)"
 	");"
 ;
 
@@ -145,24 +145,24 @@ const std::unordered_map<std::string, CONSTS::LABELS> LABEL_TO_ENUM =
 		{STR_LABEL_REMOVE_DATA,		CONSTS::LABEL_REMOVE_DATA}
 	};
 
-const std::string STR_TABLE_PASSENGERS			= "Passengers";
+const std::string STR_TABLE_PASSENGER			= "Passenger";
 const std::string STR_TABLE_BAGGAGE				= "Baggage";
-const std::string STR_TABLE_AIRPLANES			= "Airplanes";
-const std::string STR_TABLE_HANGARS				= "Hangars";
-const std::string STR_TABLE_EMPLOYEES			= "Employees";
+const std::string STR_TABLE_AIRPLANE			= "Airplane";
+const std::string STR_TABLE_HANGAR				= "Hangar";
+const std::string STR_TABLE_EMPLOYEE			= "Employee";
 const std::string STR_TABLE_EMPLOYEEADDRESS		= "EmployeeAddress";
-const std::string STR_TABLE_FLIGHTS				= "Flights";
+const std::string STR_TABLE_FLIGHT				= "Flight";
 const std::string STR_TABLE_FLIGHTREGISTER		= "FlightRegister";
 
 const std::unordered_map<std::string, CONSTS::TABLES> TABLE_TO_ENUM = 
 	{
-		{STR_TABLE_PASSENGERS,		CONSTS::TABLE_PASSENGERS},
+		{STR_TABLE_PASSENGER,		CONSTS::TABLE_PASSENGER},
 		{STR_TABLE_BAGGAGE,			CONSTS::TABLE_BAGGAGE},
-		{STR_TABLE_AIRPLANES,		CONSTS::TABLE_AIRPLANES},
-		{STR_TABLE_HANGARS,			CONSTS::TABLE_HANGARS},
-		{STR_TABLE_EMPLOYEES,		CONSTS::TABLE_EMPLOYEES},
+		{STR_TABLE_AIRPLANE,		CONSTS::TABLE_AIRPLANE},
+		{STR_TABLE_HANGAR,			CONSTS::TABLE_HANGAR},
+		{STR_TABLE_EMPLOYEE,		CONSTS::TABLE_EMPLOYEE},
 		{STR_TABLE_EMPLOYEEADDRESS,	CONSTS::TABLE_EMPLOYEEADDRESS},
-		{STR_TABLE_FLIGHTS,			CONSTS::TABLE_FLIGHTS},
+		{STR_TABLE_FLIGHT,			CONSTS::TABLE_FLIGHT},
 		{STR_TABLE_FLIGHTREGISTER,	CONSTS::TABLE_FLIGHTREGISTER}
 	};
 
@@ -178,23 +178,23 @@ const std::vector<std::string> CONSTS::ALL_CREATE_TABLES =
 
 const std::vector<std::string> CONSTS::TABLE_NAMES =
 	{
-		STR_TABLE_PASSENGERS, STR_TABLE_BAGGAGE, STR_TABLE_AIRPLANES,
-		STR_TABLE_HANGARS, STR_TABLE_EMPLOYEES, STR_TABLE_EMPLOYEEADDRESS,
-		STR_TABLE_FLIGHTS, STR_TABLE_FLIGHTREGISTER
+		STR_TABLE_PASSENGER, STR_TABLE_BAGGAGE, STR_TABLE_AIRPLANE,
+		STR_TABLE_HANGAR, STR_TABLE_EMPLOYEE, STR_TABLE_EMPLOYEEADDRESS,
+		STR_TABLE_FLIGHT, STR_TABLE_FLIGHTREGISTER
 	};
 
 // See FIXME in constants.h
-// const std::unordered_map<std::string, int> CONSTS::TABLE_COLUMN_COUNT =
-// 	{
-// 		{CONSTS::TABLE_PASSENGERS,		5},
-// 		{CONSTS::TABLE_BAGGAGE,			4},
-// 		{CONSTS::TABLE_AIRPLANES,		4},
-// 		{CONSTS::TABLE_HANGARS,			3},
-// 		{CONSTS::TABLE_EMPLOYEES,		10},
-// 		{CONSTS::TABLE_EMPLOYEEADDRESS,	6},
-// 		{CONSTS::TABLE_FLIGHTS,			11},
-// 		{CONSTS::TABLE_FLIGHTREGISTER,	2}
-// 	};
+const std::unordered_map<CONSTS::TABLES, int> CONSTS::TABLE_COLUMN_COUNT =
+	{
+		{CONSTS::TABLE_PASSENGER,		5},
+		{CONSTS::TABLE_BAGGAGE,			4},
+		{CONSTS::TABLE_AIRPLANE,		4},
+		{CONSTS::TABLE_HANGAR,			3},
+		{CONSTS::TABLE_EMPLOYEE,		10},
+		{CONSTS::TABLE_EMPLOYEEADDRESS,	6},
+		{CONSTS::TABLE_FLIGHT,			11},
+		{CONSTS::TABLE_FLIGHTREGISTER,	2}
+	};
 
 const std::vector<std::string> CONSTS::MENU_LABELS = 
 	{
@@ -233,23 +233,4 @@ CONSTS::TABLES CONSTS::ConvertTableName(const std::string& table) {
 			return value;
 	}
 	throw std::runtime_error("ERROR: No table \"" + table + "\" found in TABLE_TO_ENUM");
-}
-
-std::string CONSTS::TableInsertFormat(CONSTS::TABLES table_name) {
-	switch(table_name) {
-		case CONSTS::TABLE_AIRPLANES:
-			return "%s, %s, %s, %s";
-		case CONSTS::TABLE_BAGGAGE:
-			return "%s, %s, %s, %s";
-		case CONSTS::TABLE_EMPLOYEEADDRESS:
-			return "%s, %s, %s, %s, %s, %s";
-		case CONSTS::TABLE_EMPLOYEES:
-			return "%s, %s, %s, %s, %s, %s, %s, %s, %s, %s";
-		// case CONSTS::TABLE_FLIGHTREGISTER:
-		// case CONSTS::TABLE_FLIGHTS:
-		// case CONSTS::TABLE_HANGARS:
-		// case CONSTS::TABLE_PASSENGERS:
-		default:
-			return "";
-	}
 }

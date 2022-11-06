@@ -28,6 +28,7 @@ class DataBase {
 		// Returns m_LastQuery_Columns
 		const std::vector<std::string>& GetLastQueryColumns() const;
 		const std::string& GetLastErrorMsg() const;
+		std::vector<std::vector<std::string>> GetTableInfo(const std::string& table_name);
 
 	
 	private:
@@ -42,6 +43,5 @@ class DataBase {
 		static inline std::vector<std::string> m_LastQuery_Columns;
 		static inline std::vector<std::vector<std::string>> m_LastQuery_Values;
 		std::string m_LastErrorMsg = "";
-
 };
 } // namespace DB

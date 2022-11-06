@@ -6,22 +6,15 @@
 
 
 struct CONSTS {
-	static const std::vector<std::string> ALL_CREATE_TABLES;
-	// FIXME?: Probably no need in column count map
-	// We can just query to DB and count how many tables we got
-	// static const std::unordered_map<std::string, int> TABLE_COLUMN_COUNT;
-	static const std::vector<std::string> MENU_LABELS;
-	static const std::vector<std::string> TABLE_NAMES;
-
 	// Table names
 	enum TABLES {
-		TABLE_PASSENGERS,
+		TABLE_PASSENGER,
 		TABLE_BAGGAGE, 
-		TABLE_AIRPLANES,
-		TABLE_HANGARS,
-		TABLE_EMPLOYEES, 
+		TABLE_AIRPLANE,
+		TABLE_HANGAR,
+		TABLE_EMPLOYEE, 
 		TABLE_EMPLOYEEADDRESS, 
-		TABLE_FLIGHTS,
+		TABLE_FLIGHT,
 		TABLE_FLIGHTREGISTER
 	};
 	static std::string ConvertTableName(const TABLES& table);
@@ -41,5 +34,10 @@ struct CONSTS {
 	};
 	static std::string ConvertLabelName(const LABELS& label);
 	static LABELS ConvertLabelName(const std::string& label);
-	static std::string TableInsertFormat(TABLES table_name);
+	static const std::vector<std::string> ALL_CREATE_TABLES;
+	// FIXME: Unfortunately, for now I can't figure out how to get
+	// column count in MainApp::insert_button_click
+	static const std::unordered_map<TABLES, int> TABLE_COLUMN_COUNT;
+	static const std::vector<std::string> MENU_LABELS;
+	static const std::vector<std::string> TABLE_NAMES;
 };
