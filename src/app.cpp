@@ -80,6 +80,8 @@ void MainApp::run() {
 		// FIXME: Transfer this to gui namespace somehow
 		draw_side_panel_window();
 		draw_table_window();
+		if(m_ErrorOccurred)
+			show_error();
 
 		gui::RenderEnd(m_Window, m_WindowWidth, m_WindowHeight);
 	}
@@ -264,11 +266,26 @@ void MainApp::insert_button_click(const bool& id_col_active) {
 	values.pop_back();
 	columns.pop_back();
 
-	m_DB.execute("INSERT INTO %s(%s) VALUES (%s);", m_CurrentTable.c_str(), columns.c_str(), values.c_str());
+
+	if(!m_DB.execute("INSERT INTO %s(%s) VALUES (%s);", m_CurrentTable.c_str(), columns.c_str(), values.c_str())) {
+		m_ErrorOccurred = true;
+	}
 
 	// Clear input row after insertion
 	for(auto& arr : m_InputFields) {
 		memset(arr, 0, 256);
 	}
+}
+ 
+void MainApp::show_error() {
+	const int win_err_height = 300;
+	const int win_err_width = m_WindowWidth - SIDE_MENU_WIDTH;
+	ImGuiWindowFlags win_err_flags = ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse;
+
+	ImGui::SetNextWindowPos(ImVec2(SIDE_MENU_WIDTH, m_WindowHeight - win_err_height));
+	ImGui::SetNextWindowSize(ImVec2(win_err_width, win_err_height));
+	ImGui::Begin("##Error", &m_ErrorOccurred, win_err_flags);
+	ImGui::Text(m_DB.GetLastErrorMsg().c_str());
+	ImGui::End();
 }
 } // namespace App

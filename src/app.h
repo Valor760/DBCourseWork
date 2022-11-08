@@ -33,6 +33,7 @@ class MainApp {
 		void insert_data();
 		void draw_table_combobox();
 		void insert_button_click(const bool& id_col_active = false);
+		void show_error();
 
 
 	private:
@@ -51,6 +52,8 @@ class MainApp {
 		std::string m_LastTable = "";
 
 		bool m_ReceivedColNames = false;
+		bool m_ErrorOccurred = false;
+		
 
 		// FIXME: We have the same fields in DB class, but they are always rewritten
 		// These fields needed for insert-draw functions to work properly
