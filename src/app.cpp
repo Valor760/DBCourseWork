@@ -113,7 +113,7 @@ void MainApp::draw_table_window() {
 	// Create table(right) window
 	ImGui::SetNextWindowSize(ImVec2(m_WindowWidth-SIDE_MENU_WIDTH, m_WindowHeight));
 	ImGui::SetNextWindowPos(ImVec2(SIDE_MENU_WIDTH, 0));
-	ImGui::Begin("Table Test", nullptr, flags);
+	ImGui::Begin("##Table Test", nullptr, flags);
 	ImGui::SetWindowFontScale(m_FontScale);
 	
 	switch(m_CurrentLabel) {
@@ -164,6 +164,8 @@ void MainApp::draw_table_combobox() {
 			// }
 		}
 		ImGui::EndCombo();
+		if(m_CurrentTable != m_LastTable)
+			m_ReceivedColNames = false;
 	}
 }
 
@@ -209,17 +211,16 @@ void MainApp::insert_data() {
 		m_ReceivedColNames = false;
 	} 
 
-	static std::vector<std::vector<std::string>> table_info;	
 	if(!m_ReceivedColNames) {
-		table_info = m_DB.GetTableInfo(m_CurrentTable);
+		m_LastTableInfo = m_DB.GetTableInfo(m_CurrentTable);
 		m_LastTable = m_CurrentTable;
 		m_ReceivedColNames = true;
 	}
 
 	// Draw columns for insert
-	if(table_info.size() && ImGui::BeginTable("##TableInsert", table_info.size()))
+	if(m_LastTableInfo.size() && ImGui::BeginTable("##TableInsert", m_LastTableInfo.size()))
 	{
-		for(auto& column_name : table_info) {
+		for(auto& column_name : m_LastTableInfo) {
 			ImGui::TableSetupColumn(column_name[1].c_str());
 		}
 		ImGui::TableHeadersRow();
@@ -228,11 +229,13 @@ void MainApp::insert_data() {
 		if(m_CurrentTable == "Employee" || m_CurrentTable == "Hangar" || m_CurrentTable == "Airlane") {
 			id_col_active = true;
 		}
-		for(int cell_idx = 0; cell_idx < table_info.size(); cell_idx++) {
+
+		const float cell_width = (m_WindowWidth - SIDE_MENU_WIDTH - 10) / (float)m_LastTableInfo.size();
+		for(int cell_idx = 0; cell_idx < m_LastTableInfo.size(); cell_idx++) {
 			ImGui::TableNextColumn();
-			ImGui::SetNextItemWidth(-FLT_MIN);
+			ImGui::SetNextItemWidth(cell_width);
 			ImGui::PushID(cell_idx);
-			ImGui::InputText("##cell", m_InputFields[cell_idx], 256, 
+			ImGui::InputText("##cell", m_InputFields[cell_idx], 256,
 							(!id_col_active && cell_idx == 0) ? ImGuiInputTextFlags_ReadOnly : 0);
 			ImGui::PopID();
 		}
@@ -275,6 +278,7 @@ void MainApp::insert_button_click(const bool& id_col_active) {
 	for(auto& arr : m_InputFields) {
 		memset(arr, 0, 256);
 	}
+	m_LastTable = "";
 }
  
 void MainApp::show_error() {
@@ -285,7 +289,8 @@ void MainApp::show_error() {
 	ImGui::SetNextWindowPos(ImVec2(SIDE_MENU_WIDTH, m_WindowHeight - win_err_height));
 	ImGui::SetNextWindowSize(ImVec2(win_err_width, win_err_height));
 	ImGui::Begin("##Error", &m_ErrorOccurred, win_err_flags);
-	ImGui::Text(m_DB.GetLastErrorMsg().c_str());
+	ImGui::SetWindowFontScale(m_FontScale);
+	ImGui::Text(m_DB.GetLastErrorMsg().c_str());gt
 	ImGui::End();
 }
 } // namespace App

@@ -16,7 +16,7 @@ const std::string create_table_baggage =
 	"CREATE TABLE IF NOT EXISTS Baggage ("
 	"B_ID INTEGER PRIMARY KEY AUTOINCREMENT,"
 	"B_Weight_KG REAL NOT NULL,"
-	"B_IsFragile BOOLEAN NOT NULL CHECK (B_IsFragile IN (0, 1)),"
+	"B_IsFragile BOOLEAN NOT NULL,"
 	"P_ID INTEGER,"
 	
 	"CHECK(B_Weight_KG < 10),"
