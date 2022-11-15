@@ -75,8 +75,11 @@ void MainApp::run() {
 	while(!glfwWindowShouldClose(m_Window)) {
 		glfwPollEvents();
 		process_keys();
-		
+
+		// TODO: This can be drawn once in every event
+		// no need to update every frame
 		gui::RenderBegin();
+
 		// FIXME: Transfer this to gui namespace somehow
 		draw_side_panel_window();
 		draw_table_window();
@@ -134,6 +137,8 @@ void MainApp::draw_table_window() {
 		case CONSTS::LABEL_QUERY_6:
 			break;
 		case CONSTS::LABEL_REMOVE_DATA:
+			draw_table_combobox();
+			delete_data();
 			break;
 		default:
 			break;
@@ -235,6 +240,7 @@ void MainApp::insert_data() {
 			ImGui::TableNextColumn();
 			ImGui::SetNextItemWidth(cell_width);
 			ImGui::PushID(cell_idx);
+			// TODO: Make an empty space or smth similar so the cell couldn't be selected
 			ImGui::InputText("##cell", m_InputFields[cell_idx], 256,
 							(!id_col_active && cell_idx == 0) ? ImGuiInputTextFlags_ReadOnly : 0);
 			ImGui::PopID();
@@ -290,7 +296,72 @@ void MainApp::show_error() {
 	ImGui::SetNextWindowSize(ImVec2(win_err_width, win_err_height));
 	ImGui::Begin("##Error", &m_ErrorOccurred, win_err_flags);
 	ImGui::SetWindowFontScale(m_FontScale);
-	ImGui::Text(m_DB.GetLastErrorMsg().c_str());gt
+	ImGui::Text(m_DB.GetLastErrorMsg().c_str());
 	ImGui::End();
+}
+
+void MainApp::delete_data() {
+	if(m_CurrentTable != m_LastTable) {
+		m_DB.execute("SELECT * FROM %s", m_CurrentTable.c_str());
+		m_LastQuery_Columns = m_DB.GetLastQueryColumns();
+		m_LastQuery_Rows = m_DB.GetLastQueryResult();
+		m_LastTable = m_CurrentTable;
+	}
+
+	if(m_LastQuery_Rows.empty()) {
+		ImGui::Text("No data available in this table! Please insert data...");
+	}
+	else {
+		const ImVec2 del_button_size = {100., 20.};
+		ImGui::Text("Select row's primary key to remove:");
+		ImGui::SetNextItemWidth(del_button_size.x);
+		ImGui::Text("%s:", m_LastQuery_Columns[0].c_str());
+		ImGui::SameLine();
+		ImGui::SetNextItemWidth(m_WindowWidth - SIDE_MENU_WIDTH - del_button_size.x * 2);
+
+		// Draw combobox with different primary keys
+		if(ImGui::BeginCombo("##Tables", m_CurrentTable.c_str())) 
+		{
+			for(auto& table : CONSTS::TABLE_NAMES) 
+			{
+				const bool is_selected = (table == m_CurrentTable);
+				if(ImGui::Selectable(table.c_str(), is_selected)) 
+				{
+					m_CurrentTable = table;
+				}
+
+				// FIXME: What this does? Should it be in a program?
+				// if (is_selected) {
+				// 	ImGui::SetItemDefaultFocus();
+				// }
+			}
+			ImGui::EndCombo();
+			if(m_CurrentTable != m_LastTable)
+				m_ReceivedColNames = false;
+		}
+		ImGui::SameLine();
+		ImGui::Button("Delete", del_button_size);
+
+		// Draw table with data
+		if(ImGui::BeginTable("##DBTable", m_LastQuery_Columns.size()))
+		{
+			// Print headers
+			for(auto& column_name : m_LastQuery_Columns) 
+			{
+				ImGui::TableSetupColumn(column_name.c_str());
+			}
+			ImGui::TableHeadersRow();
+			for(auto& row : m_LastQuery_Rows)
+			{
+				ImGui::TableNextRow();
+				for(auto& record : row)
+				{
+					ImGui::TableNextColumn();
+					ImGui::Text(record.c_str());
+				}
+			}
+			ImGui::EndTable();
+		}
+	}
 }
 } // namespace App
