@@ -50,6 +50,7 @@ class MainApp {
 		CONSTS::LABELS m_CurrentLabel = CONSTS::LABEL_SHOW_TABLE;
 		std::string m_CurrentTable = CONSTS::TABLE_NAMES[0];
 		std::string m_LastTable = "";
+		std::string m_SelectedIDCol = "";
 
 		bool m_ReceivedColNames = false;
 		bool m_ErrorOccurred = false;

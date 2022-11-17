@@ -312,22 +312,21 @@ void MainApp::delete_data() {
 		ImGui::Text("No data available in this table! Please insert data...");
 	}
 	else {
-		const ImVec2 del_button_size = {100., 20.};
 		ImGui::Text("Select row's primary key to remove:");
-		ImGui::SetNextItemWidth(del_button_size.x);
+		// ImGui::SetNextItemWidth(del_button_size.x);
 		ImGui::Text("%s:", m_LastQuery_Columns[0].c_str());
 		ImGui::SameLine();
-		ImGui::SetNextItemWidth(m_WindowWidth - SIDE_MENU_WIDTH - del_button_size.x * 2);
+		ImGui::SetNextItemWidth(m_WindowWidth - SIDE_MENU_WIDTH - 100. * 2);
 
 		// Draw combobox with different primary keys
-		if(ImGui::BeginCombo("##Tables", m_CurrentTable.c_str())) 
+		if(ImGui::BeginCombo("##IDS", m_SelectedIDCol.c_str()))
 		{
-			for(auto& table : CONSTS::TABLE_NAMES) 
+			for(auto& row : m_LastQuery_Rows)
 			{
-				const bool is_selected = (table == m_CurrentTable);
-				if(ImGui::Selectable(table.c_str(), is_selected)) 
+				const bool is_selected = (m_SelectedIDCol == row[0]);
+				if(ImGui::Selectable(row[0].c_str(), is_selected))
 				{
-					m_CurrentTable = table;
+					m_SelectedIDCol = row[0];
 				}
 
 				// FIXME: What this does? Should it be in a program?
@@ -336,11 +335,14 @@ void MainApp::delete_data() {
 				// }
 			}
 			ImGui::EndCombo();
-			if(m_CurrentTable != m_LastTable)
-				m_ReceivedColNames = false;
 		}
 		ImGui::SameLine();
-		ImGui::Button("Delete", del_button_size);
+		if(ImGui::Button("Delete", ImVec2(-FLT_MIN, 0))) {
+			// Remove selected row
+			m_DB.execute("DELETE FROM %s WHERE %s == \"%s\";",
+						 m_CurrentTable.c_str(), m_LastQuery_Columns[0].c_str(), m_SelectedIDCol.c_str());
+			m_LastTable = ""; // Force table update
+		}
 
 		// Draw table with data
 		if(ImGui::BeginTable("##DBTable", m_LastQuery_Columns.size()))
