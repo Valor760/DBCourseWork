@@ -102,8 +102,12 @@ void MainApp::draw_side_panel_window() {
 	
 	// Display all labels in side menu
 	for(auto& label : CONSTS::MENU_LABELS) {
-		if(ImGui::Selectable(label.c_str())) {
+		bool is_selected = (m_CurrentLabel == CONSTS::ConvertLabelName(label));
+		if(ImGui::Selectable(label.c_str(), is_selected)) {
 			m_CurrentLabel = CONSTS::ConvertLabelName(label);
+		}
+		if (is_selected) {
+			ImGui::SetItemDefaultFocus();
 		}
 	}
 
@@ -135,6 +139,7 @@ void MainApp::draw_table_window() {
 		case CONSTS::LABEL_QUERY_4:
 		case CONSTS::LABEL_QUERY_5:
 		case CONSTS::LABEL_QUERY_6:
+			execute_query();
 			break;
 		case CONSTS::LABEL_REMOVE_DATA:
 			draw_table_combobox();
@@ -240,9 +245,12 @@ void MainApp::insert_data() {
 			ImGui::TableNextColumn();
 			ImGui::SetNextItemWidth(cell_width);
 			ImGui::PushID(cell_idx);
-			// TODO: Make an empty space or smth similar so the cell couldn't be selected
-			ImGui::InputText("##cell", m_InputFields[cell_idx], 256,
-							(!id_col_active && cell_idx == 0) ? ImGuiInputTextFlags_ReadOnly : 0);
+
+			const bool is_disabled = (!id_col_active && cell_idx == 0);
+			if(is_disabled) ImGui::BeginDisabled();
+			ImGui::InputText("##cell", m_InputFields[cell_idx], 256, 0);
+			if(is_disabled) ImGui::EndDisabled();
+
 			ImGui::PopID();
 		}
 
@@ -339,8 +347,11 @@ void MainApp::delete_data() {
 		ImGui::SameLine();
 		if(ImGui::Button("Delete", ImVec2(-FLT_MIN, 0))) {
 			// Remove selected row
-			m_DB.execute("DELETE FROM %s WHERE %s == \"%s\";",
-						 m_CurrentTable.c_str(), m_LastQuery_Columns[0].c_str(), m_SelectedIDCol.c_str());
+			if(!m_DB.execute("DELETE FROM %s WHERE %s == \"%s\";",
+						 m_CurrentTable.c_str(), m_LastQuery_Columns[0].c_str(), m_SelectedIDCol.c_str()))
+			{
+				m_ErrorOccurred = true;
+			}
 			m_LastTable = ""; // Force table update
 		}
 
@@ -364,6 +375,26 @@ void MainApp::delete_data() {
 			}
 			ImGui::EndTable();
 		}
+	}
+}
+
+void MainApp::execute_query() {
+	switch(m_CurrentLabel) {
+		case CONSTS::LABEL_QUERY_1:
+			
+			break;
+		case CONSTS::LABEL_QUERY_2:
+			break;
+		case CONSTS::LABEL_QUERY_3:
+			break;
+		case CONSTS::LABEL_QUERY_4:
+			break;
+		case CONSTS::LABEL_QUERY_5:
+			break;
+		case CONSTS::LABEL_QUERY_6:
+			break;
+		default:
+			throw std::runtime_error("execute_query() - Not a query label provided!");
 	}
 }
 } // namespace App

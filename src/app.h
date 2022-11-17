@@ -35,6 +35,7 @@ class MainApp {
 		void insert_button_click(const bool& id_col_active = false);
 		void show_error();
 		void delete_data();
+		void execute_query();
 
 	private:
 		DB::DataBase m_DB;
