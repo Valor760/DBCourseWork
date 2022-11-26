@@ -117,8 +117,18 @@ const std::string create_table_flightregister =
 	"FL_ID INTEGER,"
 	"P_ID INTEGER,"
 	"PRIMARY KEY (FL_ID, P_ID),"
-	"FOREIGN KEY (FL_ID) REFERENCES Flights(FL_ID),"
-	"FOREIGN KEY (P_ID) REFERENCES Passengers(P_ID)"
+	"FOREIGN KEY (FL_ID) REFERENCES Flight(FL_ID),"
+	"FOREIGN KEY (P_ID) REFERENCES Passenger(P_ID)"
+	");"
+;
+
+const std::string create_table_employeeonboard =
+	"CREATE TABLE IF NOT EXISTS EmployeeOnboard ("
+	"FL_ID INTEGER,"
+	"Emp_ID TEXT CHECK(length(Emp_ID) = 4),"
+	"PRIMARY KEY (FL_ID, Emp_ID),"
+	"FOREIGN KEY (FL_ID) REFERENCES Flight(FL_ID),"
+	"FOREIGN KEY (Emp_ID) REFERENCES Employee(Emp_ID)"
 	");"
 ;
 
@@ -173,7 +183,7 @@ const std::vector<std::string> CONSTS::ALL_CREATE_TABLES =
 	{
 		create_table_passengers, create_table_baggage, create_table_airplanes,
 		create_table_hangars, create_table_employees, create_table_employeeaddress,
-		create_table_flights, create_table_flightregister
+		create_table_flights, create_table_flightregister, create_table_employeeonboard
 	};
 
 const std::vector<std::string> CONSTS::TABLE_NAMES =
@@ -181,19 +191,6 @@ const std::vector<std::string> CONSTS::TABLE_NAMES =
 		STR_TABLE_PASSENGER, STR_TABLE_BAGGAGE, STR_TABLE_AIRPLANE,
 		STR_TABLE_HANGAR, STR_TABLE_EMPLOYEE, STR_TABLE_EMPLOYEEADDRESS,
 		STR_TABLE_FLIGHT, STR_TABLE_FLIGHTREGISTER
-	};
-
-// See FIXME in constants.h
-const std::unordered_map<CONSTS::TABLES, int> CONSTS::TABLE_COLUMN_COUNT =
-	{
-		{CONSTS::TABLE_PASSENGER,		5},
-		{CONSTS::TABLE_BAGGAGE,			4},
-		{CONSTS::TABLE_AIRPLANE,		4},
-		{CONSTS::TABLE_HANGAR,			3},
-		{CONSTS::TABLE_EMPLOYEE,		10},
-		{CONSTS::TABLE_EMPLOYEEADDRESS,	6},
-		{CONSTS::TABLE_FLIGHT,			11},
-		{CONSTS::TABLE_FLIGHTREGISTER,	2}
 	};
 
 const std::vector<std::string> CONSTS::MENU_LABELS = 

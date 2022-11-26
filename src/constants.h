@@ -35,9 +35,6 @@ struct CONSTS {
 	static std::string ConvertLabelName(const LABELS& label);
 	static LABELS ConvertLabelName(const std::string& label);
 	static const std::vector<std::string> ALL_CREATE_TABLES;
-	// FIXME: Unfortunately, for now I can't figure out how to get
-	// column count in MainApp::insert_button_click
-	static const std::unordered_map<TABLES, int> TABLE_COLUMN_COUNT;
 	static const std::vector<std::string> MENU_LABELS;
 	static const std::vector<std::string> TABLE_NAMES;
 };
