@@ -9,13 +9,14 @@ struct CONSTS {
 	// Table names
 	enum TABLES {
 		TABLE_PASSENGER,
-		TABLE_BAGGAGE, 
+		TABLE_BAGGAGE,
 		TABLE_AIRPLANE,
 		TABLE_HANGAR,
-		TABLE_EMPLOYEE, 
-		TABLE_EMPLOYEEADDRESS, 
+		TABLE_EMPLOYEE,
+		TABLE_EMPLOYEEADDRESS,
 		TABLE_FLIGHT,
-		TABLE_FLIGHTREGISTER
+		TABLE_FLIGHTREGISTER,
+		TABLE_EMPLOYEEONBOARD
 	};
 	static std::string ConvertTableName(const TABLES& table);
 	static TABLES ConvertTableName(const std::string& table);
@@ -29,7 +30,8 @@ struct CONSTS {
 		LABEL_QUERY_3,
 		LABEL_QUERY_4,
 		LABEL_QUERY_5,
-		LABEL_QUERY_6, 
+		LABEL_QUERY_6,
+		LABEL_QUERY_7,
 		LABEL_REMOVE_DATA,
 	};
 	static std::string ConvertLabelName(const LABELS& label);

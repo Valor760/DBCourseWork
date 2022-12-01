@@ -62,7 +62,7 @@ class MainApp {
 		// otherwise a query spam to DB happens
 		std::vector<std::vector<std::string>> m_LastQuery_Rows = {};
 		std::vector<std::string> m_LastQuery_Columns = {};
-		std::vector<std::vector<std::string>> m_LastTableInfo = {};	
+		std::vector<std::vector<std::string>> m_LastTableInfo = {};
 
 		// Initialize static char arrays for input on heap
 		// 256 characters will be enough, right?

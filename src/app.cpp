@@ -132,13 +132,13 @@ void MainApp::draw_table_window() {
 			draw_table_combobox();
 			insert_data();
 			break;
-		// TODO: Make one function to execute user query based on label provided
 		case CONSTS::LABEL_QUERY_1:
 		case CONSTS::LABEL_QUERY_2:
 		case CONSTS::LABEL_QUERY_3:
 		case CONSTS::LABEL_QUERY_4:
 		case CONSTS::LABEL_QUERY_5:
 		case CONSTS::LABEL_QUERY_6:
+		case CONSTS::LABEL_QUERY_7:
 			execute_query();
 			break;
 		case CONSTS::LABEL_REMOVE_DATA:
@@ -236,7 +236,7 @@ void MainApp::insert_data() {
 		ImGui::TableHeadersRow();
 
 		bool id_col_active = false;
-		if(m_CurrentTable == "Employee" || m_CurrentTable == "Hangar" || m_CurrentTable == "Airlane") {
+		if(m_CurrentTable == "Employee" || m_CurrentTable == "Hangar" || m_CurrentTable == "Airlane" || m_CurrentTable == "FlightRegister") {
 			id_col_active = true;
 		}
 
@@ -381,18 +381,189 @@ void MainApp::delete_data() {
 void MainApp::execute_query() {
 	switch(m_CurrentLabel) {
 		case CONSTS::LABEL_QUERY_1:
-			
+		{
+			ImGui::Text("Input Flight ID to see how many people registered on the flight");
+
+			static char input[256];
+			ImGui::SetNextItemWidth(m_WindowWidth - SIDE_MENU_WIDTH - 150);
+			ImGui::InputText("##input", input, 256);
+
+			const char* query =
+				"SELECT COUNT(*) as \"Number of people on ID-%s flight\" "
+				"FROM FlightRegister "
+				"WHERE FL_ID = \"%s\";"
+			;
+			ImGui::SameLine();
+			if(ImGui::Button("Query", ImVec2(-FLT_MIN, 0))) {
+				m_DB.execute(query, input, input);
+				m_LastQuery_Rows = m_DB.GetLastQueryResult();
+				m_LastQuery_Columns = m_DB.GetLastQueryColumns();
+			}
+			if(m_LastQuery_Columns.size() == 1) {
+				draw_table();
+			}
 			break;
+		}
 		case CONSTS::LABEL_QUERY_2:
+		{
+			ImGui::Text("Show how many flights done by each pilot");
+
+			const std::string query =
+				"SELECT	EmployeeOnboard.Emp_ID as \"Pilot ID\", "
+				"		Employee.Emp_Name as \"Pilot Name\", "
+				"		Employee.Emp_Surname as \"Pilot Surname\", "
+				"		COUNT(EmployeeOnboard.FL_ID) as \"Pilot Flights\" "
+				"FROM EmployeeOnboard "
+				"INNER JOIN Employee "
+				"ON EmployeeOnboard.Emp_ID = Employee.Emp_ID "
+				"WHERE Employee.Emp_Position = \"Pilot\" "
+				//"GROUP BY EmployeeOnboard.Emp_ID , Employee.Emp_Name, Employee.Emp_Surname "
+				// "HAVING Employee.Emp_Position = \"Pilot\";"
+			;
+
+			ImGui::SameLine();
+			if(ImGui::Button("Query", ImVec2(-FLT_MIN, 0))) {
+				m_DB.execute(query.c_str());
+				m_LastQuery_Rows = m_DB.GetLastQueryResult();
+				m_LastQuery_Columns = m_DB.GetLastQueryColumns();
+			}
+			if(m_LastQuery_Columns.size() == 4) {
+				draw_table();
+			}
 			break;
+		}
 		case CONSTS::LABEL_QUERY_3:
+		{
+			ImGui::Text("Show average baggage weight among all flights for each plane");
+
+			const std::string query =
+				"SELECT "
+				"		Airplane.Plane_ID as \"Airplane ID\", "
+				"		AVG(Baggage.B_Weight_KG) as \"Average Baggage Weight (KG)\" "
+				"FROM Airplane "
+				"INNER JOIN Flight ON Flight.Plane_ID = Airplane.Plane_ID "
+				"INNER JOIN FlightRegister ON FlightRegister.FL_ID = Flight.FL_ID "
+				"INNER JOIN Passenger ON FlightRegister.P_ID = Passenger.P_ID "
+				"INNER JOIN Baggage ON Passenger.P_ID = Baggage.P_ID "
+			;
+
+			ImGui::SameLine();
+			if(ImGui::Button("Query", ImVec2(-FLT_MIN, 0))) {
+				m_DB.execute(query.c_str());
+				m_LastQuery_Rows = m_DB.GetLastQueryResult();
+				m_LastQuery_Columns = m_DB.GetLastQueryColumns();
+			}
+			if(m_LastQuery_Columns.size() == 2) {
+				draw_table();
+			}
 			break;
+		}
 		case CONSTS::LABEL_QUERY_4:
+		{
+			ImGui::Text("Show who did use Riga airport for more than 5 flights");
+
+			const std::string query =
+				"SELECT "
+				"		Passenger.P_ID as \"Passenger ID\", "
+				"		Passenger.P_Name as \"Passenger Name\", "
+				"		Passenger.P_Surname as \"Passenger Surname\" "
+				"FROM Passenger "
+				"INNER JOIN FlightRegister ON Passenger.P_ID = FlightRegister.P_ID "
+				"GROUP BY Passenger.P_ID "
+				"HAVING COUNT(FlightRegister.FL_ID) >= 5 "
+			;
+
+			ImGui::SameLine();
+			if(ImGui::Button("Query", ImVec2(-FLT_MIN, 0))) {
+				m_DB.execute(query.c_str());
+				m_LastQuery_Rows = m_DB.GetLastQueryResult();
+				m_LastQuery_Columns = m_DB.GetLastQueryColumns();
+			}
+			if(m_LastQuery_Columns.size() == 3) {
+				draw_table();
+			}
 			break;
+		}
 		case CONSTS::LABEL_QUERY_5:
+		{
+			ImGui::Text("Show number of flights which had Riga airport as a destination");
+
+			const std::string query =
+				"SELECT "
+				"		COUNT(*) as \"Number of fligths with destination city - Riga\" "
+				"FROM Flight "
+				"WHERE FL_Land_City = \"Riga\" "
+			;
+
+			ImGui::SameLine();
+			if(ImGui::Button("Query", ImVec2(-FLT_MIN, 0))) {
+				m_DB.execute(query.c_str());
+				m_LastQuery_Rows = m_DB.GetLastQueryResult();
+				m_LastQuery_Columns = m_DB.GetLastQueryColumns();
+			}
+			if(m_LastQuery_Columns.size() == 1) {
+				draw_table();
+			}
 			break;
+		}
 		case CONSTS::LABEL_QUERY_6:
+		{
+			ImGui::Text("Show how many times each pilot has taken off from Riga airport");
+
+			const std::string query =
+				"SELECT "
+				"		Employee.Emp_ID as \"Pilot ID\", "
+				"		Employee.Emp_Name as \"Pilot Name\", "
+				"		Employee.Emp_Surname as \"Pilot Surname\", "
+				"		COUNT(*) as \"Number of takeoffs from Riga\" "
+				"FROM Employee "
+				"INNER JOIN EmployeeOnboard ON Employee.Emp_ID = EmployeeOnboard.Emp_ID "
+				"INNER JOIN Flight ON EmployeeOnboard.FL_ID = Flight.FL_ID "
+				"GROUP BY Employee.Emp_ID "
+				"HAVING Employee.Emp_Position = \"Pilot\" AND Flight.FL_Takeoff_City = \"Riga\""
+			;
+
+			ImGui::SameLine();
+			if(ImGui::Button("Query", ImVec2(-FLT_MIN, 0))) {
+				m_DB.execute(query.c_str());
+				m_LastQuery_Rows = m_DB.GetLastQueryResult();
+				m_LastQuery_Columns = m_DB.GetLastQueryColumns();
+			}
+			if(m_LastQuery_Columns.size() == 4) {
+				draw_table();
+			}
 			break;
+		}
+		case CONSTS::LABEL_QUERY_7:
+		{
+			ImGui::Text("Show each technician who currently maintains a plane which transported a fragile baggage");
+
+			const std::string query =
+				"SELECT "
+				"		Employee.Emp_ID as \"Employee ID\", "
+				"		Employee.Emp_Name as \"Employee Name\", "
+				"		Employee.Emp_Surname as \"Employee Surname\" "
+				"FROM Employee "
+				"INNER JOIN Hangar ON Employee.H_ID = Hangar.H_ID "
+				"INNER JOIN Airplane ON Hangar.Plane_ID = Airplane.Plane_ID "
+				"INNER JOIN Flight ON Airplane.Plane_ID = Flight.Plane_ID "
+				"INNER JOIN FlightRegister ON Flight.FL_ID = FlightRegister.FL_ID "
+				"INNER JOIN Passenger ON FlightRegister.P_ID = Passenger.P_ID "
+				"INNER JOIN Baggage ON Passenger.P_ID = Baggage.P_ID "
+				"WHERE Baggage.B_IsFragile = \"TRUE\" AND Employee.Emp_Position = \"Technician\" "
+			;
+
+			ImGui::SameLine();
+			if(ImGui::Button("Query", ImVec2(-FLT_MIN, 0))) {
+				m_DB.execute(query.c_str());
+				m_LastQuery_Rows = m_DB.GetLastQueryResult();
+				m_LastQuery_Columns = m_DB.GetLastQueryColumns();
+			}
+			if(m_LastQuery_Columns.size() == 3) {
+				draw_table();
+			}
+			break;
+		}
 		default:
 			throw std::runtime_error("execute_query() - Not a query label provided!");
 	}

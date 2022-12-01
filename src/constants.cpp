@@ -91,23 +91,11 @@ const std::string create_table_flights =
 	"FL_Land_City TEXT NOT NULL,"
 	"FL_Takeoff_Time DATETIME NOT NULL,"
 	"FL_Land_Time DATETIME NOT NULL,"
-	"Pilot_One_ID TEXT NOT NULL,"
-	"Pilot_Two_ID TEXT NOT NULL,"
-	"Stew_One_ID TEXT,"
-	"Stew_Two_ID TEXT,"
-	"Stew_Three_ID TEXT,"
 	"Plane_ID TEXT NOT NULL,"
 
-	"CHECK(length(Pilot_One_ID) = 4 AND length(Pilot_Two_ID) = 4 AND length(Stew_One_ID) = 4 AND length(Stew_Two_ID) = 4 AND length(Stew_Three_ID) = 4 AND length(Plane_ID) = 10),"
-	"CHECK(Pilot_One_ID <> Pilot_Two_ID),"
 	"CHECK(FL_Takeoff_City NOT IN (\"Rome\", \"Moscow\", \"London\")),"
 	"CHECK(FL_Land_City NOT IN (\"Rome\", \"Moscow\", \"London\")),"
 	
-	"FOREIGN KEY (Pilot_One_ID) REFERENCES Employee(Emp_ID),"
-	"FOREIGN KEY (Pilot_Two_ID) REFERENCES Employee(Emp_ID),"
-	"FOREIGN KEY (Stew_One_ID) REFERENCES Employee(Emp_ID),"
-	"FOREIGN KEY (Stew_Two_ID) REFERENCES Employee(Emp_ID),"
-	"FOREIGN KEY (Stew_Three_ID) REFERENCES Employee(Emp_ID),"
 	"FOREIGN KEY (Plane_ID) REFERENCES Plane(Plane_ID)"
 	");"
 ;
@@ -140,6 +128,7 @@ const std::string STR_LABEL_QUERY_3				= "Query N3";
 const std::string STR_LABEL_QUERY_4				= "Query N4";
 const std::string STR_LABEL_QUERY_5				= "Query N5";
 const std::string STR_LABEL_QUERY_6				= "Query N6";
+const std::string STR_LABEL_QUERY_7				= "Query N7";
 const std::string STR_LABEL_REMOVE_DATA			= "Remove Data";
 
 const std::unordered_map<std::string, CONSTS::LABELS> LABEL_TO_ENUM =
@@ -152,6 +141,7 @@ const std::unordered_map<std::string, CONSTS::LABELS> LABEL_TO_ENUM =
 		{STR_LABEL_QUERY_4,			CONSTS::LABEL_QUERY_4},
 		{STR_LABEL_QUERY_5,			CONSTS::LABEL_QUERY_5},
 		{STR_LABEL_QUERY_6,			CONSTS::LABEL_QUERY_6},
+		{STR_LABEL_QUERY_7,			CONSTS::LABEL_QUERY_7},
 		{STR_LABEL_REMOVE_DATA,		CONSTS::LABEL_REMOVE_DATA}
 	};
 
@@ -163,6 +153,7 @@ const std::string STR_TABLE_EMPLOYEE			= "Employee";
 const std::string STR_TABLE_EMPLOYEEADDRESS		= "EmployeeAddress";
 const std::string STR_TABLE_FLIGHT				= "Flight";
 const std::string STR_TABLE_FLIGHTREGISTER		= "FlightRegister";
+const std::string STR_TABLE_EMPLOYEEONBOARD		= "EmployeeOnboard";
 
 const std::unordered_map<std::string, CONSTS::TABLES> TABLE_TO_ENUM = 
 	{
@@ -173,7 +164,8 @@ const std::unordered_map<std::string, CONSTS::TABLES> TABLE_TO_ENUM =
 		{STR_TABLE_EMPLOYEE,		CONSTS::TABLE_EMPLOYEE},
 		{STR_TABLE_EMPLOYEEADDRESS,	CONSTS::TABLE_EMPLOYEEADDRESS},
 		{STR_TABLE_FLIGHT,			CONSTS::TABLE_FLIGHT},
-		{STR_TABLE_FLIGHTREGISTER,	CONSTS::TABLE_FLIGHTREGISTER}
+		{STR_TABLE_FLIGHTREGISTER,	CONSTS::TABLE_FLIGHTREGISTER},
+		{STR_TABLE_EMPLOYEEONBOARD, CONSTS::TABLE_EMPLOYEEONBOARD}
 	};
 
 
@@ -190,14 +182,15 @@ const std::vector<std::string> CONSTS::TABLE_NAMES =
 	{
 		STR_TABLE_PASSENGER, STR_TABLE_BAGGAGE, STR_TABLE_AIRPLANE,
 		STR_TABLE_HANGAR, STR_TABLE_EMPLOYEE, STR_TABLE_EMPLOYEEADDRESS,
-		STR_TABLE_FLIGHT, STR_TABLE_FLIGHTREGISTER
+		STR_TABLE_FLIGHT, STR_TABLE_FLIGHTREGISTER, STR_TABLE_EMPLOYEEONBOARD
 	};
 
 const std::vector<std::string> CONSTS::MENU_LABELS = 
 	{
 		STR_LABEL_SHOW_TABLE,	STR_LABEL_INSERT_DATA,	STR_LABEL_QUERY_1,
 		STR_LABEL_QUERY_2,		STR_LABEL_QUERY_3,		STR_LABEL_QUERY_4,
-		STR_LABEL_QUERY_5,		STR_LABEL_QUERY_6,		STR_LABEL_REMOVE_DATA
+		STR_LABEL_QUERY_5,		STR_LABEL_QUERY_6,		STR_LABEL_QUERY_7,
+		STR_LABEL_REMOVE_DATA
 	};
 
 std::string CONSTS::ConvertLabelName(const CONSTS::LABELS& label) {

@@ -10,7 +10,7 @@ void DataBase::init(std::string db_path) {
 	if(db_path.empty()) {
 		// FIXME: Change to logging
 		db_path = "database.db";
-		std::cout << "ERROR: Provided path is empty! Using default \"" << db_path << "\"\n";
+		std::cout << "INFO: Provided path is empty! Using default \"" << db_path << "\"\n";
 	}
 
 	int result = sqlite3_open(db_path.c_str(), &m_DB);
