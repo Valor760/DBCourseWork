@@ -25,6 +25,7 @@ class MainApp {
 		void init_opengl();
 		static void gl_key_callback(GLFWwindow* window, int key, int scan_code, int action, int mode);
 		void process_keys();
+		static void gl_window_size_callback(GLFWwindow* window, int width, int height);
 
 		// A seperate functions, to not create mess in the while() loop
 		void draw_side_panel_window();
@@ -41,13 +42,12 @@ class MainApp {
 		DB::DataBase m_DB;
 		GLFWwindow* m_Window = nullptr;
 		static inline bool m_Keys[1024] = {0};
+		static inline bool m_ProcessedKeys[1024] = {0};
 
-		// FIXME: Maybe change this to dynamic?
-		int m_WindowWidth = 1600;
-		int m_WindowHeight = 900;
+		static inline int m_WindowWidth = 1600;
+		static inline int m_WindowHeight = 900;
 		static inline float m_FontScale = 1.;
 
-		// ImGuiIO* m_IO = nullptr;
 		CONSTS::LABELS m_CurrentLabel = CONSTS::LABEL_SHOW_TABLE;
 		std::string m_CurrentTable = CONSTS::TABLE_NAMES[0];
 		std::string m_LastTable = "";
@@ -57,16 +57,15 @@ class MainApp {
 		bool m_ErrorOccurred = false;
 		
 
-		// FIXME: We have the same fields in DB class, but they are always rewritten
+		// We have the same fields in DB class, but they are always rewritten
 		// These fields needed for insert-draw functions to work properly
 		// otherwise a query spam to DB happens
-		std::vector<std::vector<std::string>> m_LastQuery_Rows = {};
-		std::vector<std::string> m_LastQuery_Columns = {};
-		std::vector<std::vector<std::string>> m_LastTableInfo = {};
+		TableRows m_LastQuery_Rows = {};
+		TableCols m_LastQuery_Columns = {};
+		TableRows m_LastTableInfo = {};
 
 		// Initialize static char arrays for input on heap
 		// 256 characters will be enough, right?
-		// FIXME: Hardcoded buffers. Make dynamic buffers.
 		std::array<char*, 16> m_InputFields;
 };
 } // namespace App

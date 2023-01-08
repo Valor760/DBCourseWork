@@ -1,6 +1,5 @@
 #include "app.h"
-
-#include <iostream>
+#include "common.h"
 
 
 int main(int argc, char** argv)
@@ -11,7 +10,7 @@ int main(int argc, char** argv)
 		app.run();
 	}
 	catch(const std::exception& e) {
-		std::cout << e.what() << '\n';
+		LOG(LOG_ERR, e.what());
 		return 1;
 	}
 	return 0;

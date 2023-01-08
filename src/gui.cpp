@@ -19,12 +19,10 @@ void RenderEnd(GLFWwindow* window, int width, int height) {
 	glfwSwapBuffers(window);
 }
 
-void Init(GLFWwindow* window) {//, ImGuiIO* io) {
+void Init(GLFWwindow* window) {
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 
-	// io = &ImGui::GetIO();
-	
 	// Init imgui platform backends
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
 	ImGui_ImplOpenGL3_Init("#version 130");

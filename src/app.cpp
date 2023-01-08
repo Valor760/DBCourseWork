@@ -8,16 +8,17 @@ MainApp::~MainApp() {
 	glfwDestroyWindow(m_Window);
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
+
+	for(auto& arr : m_InputFields)
+		delete[] arr;
 }
 
 void MainApp::init() {
 	init_opengl();
-	gui::Init(m_Window);//, m_IO);
-
+	gui::Init(m_Window);
 	m_DB.init();
 
 	// Allocate all m_InputFields
-	// FIXME: MAKE CLEANUP!!!! AND MAKE BETTER
 	for(auto& arr : m_InputFields) {
 		arr = new char[256];
 		memset(arr, 0, 256);
@@ -32,8 +33,7 @@ void MainApp::init_opengl() {
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	// FIXME: Make window resizable
-	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+	glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
 
 	m_Window = glfwCreateWindow(m_WindowWidth, m_WindowHeight, "Airport Database", nullptr, nullptr);
 	if(m_Window == NULL)
@@ -43,28 +43,45 @@ void MainApp::init_opengl() {
 	glfwSwapInterval(1); // Enable VSYNC
 
 	glfwSetKeyCallback(m_Window, gl_key_callback);
+	glfwSetWindowSizeCallback(m_Window, gl_window_size_callback);
 }
 
 void MainApp::gl_key_callback(GLFWwindow* window, int key, int scan_code, int action, int mode) {
 	if(action == GLFW_PRESS)
-		m_Keys[key] = true;
+		if(!m_ProcessedKeys[key])
+			m_Keys[key] = true;
 	
-	if(action == GLFW_RELEASE)
+	if(action == GLFW_RELEASE) {
 		m_Keys[key] = false;
+		m_ProcessedKeys[key] = false;
+	}
+}
+
+void MainApp::gl_window_size_callback(GLFWwindow* window, int width, int height) {
+	m_WindowWidth = width;
+	m_WindowHeight = height;
 }
 
 void MainApp::process_keys() {
-	if(m_Keys[GLFW_KEY_ESCAPE]) {
-		glfwSetWindowShouldClose(m_Window, GLFW_TRUE);
+	if(m_Keys[GLFW_KEY_ESCAPE] && !m_ProcessedKeys[GLFW_KEY_ESCAPE]) {
+		if(m_ErrorOccurred) {
+			m_ErrorOccurred = false;
+		}
+		else {
+			glfwSetWindowShouldClose(m_Window, GLFW_TRUE);
+		}
+		m_ProcessedKeys[GLFW_KEY_ESCAPE] = true;
 	}
 
 	// FIXME: Remove font scaling, since it is needed only for large monitors
-	if(m_Keys[GLFW_KEY_LEFT_CONTROL] && m_Keys[GLFW_KEY_EQUAL]) {
+	if(m_Keys[GLFW_KEY_LEFT_CONTROL] && m_Keys[GLFW_KEY_EQUAL] && !m_ProcessedKeys[GLFW_KEY_EQUAL]) {
+		m_ProcessedKeys[GLFW_KEY_EQUAL] = true;
 		m_FontScale += 0.2;
 		if(m_FontScale > FONT_SCALE_MAX)
 			m_FontScale = FONT_SCALE_MAX;
 	}
-	if(m_Keys[GLFW_KEY_LEFT_CONTROL] && m_Keys[GLFW_KEY_MINUS]) {
+	if(m_Keys[GLFW_KEY_LEFT_CONTROL] && m_Keys[GLFW_KEY_MINUS] && !m_ProcessedKeys[GLFW_KEY_MINUS]) {
+		m_ProcessedKeys[GLFW_KEY_MINUS] = true;
 		m_FontScale -= 0.2;
 		if(m_FontScale < FONT_SCALE_MIN)
 			m_FontScale = FONT_SCALE_MIN;
@@ -76,11 +93,8 @@ void MainApp::run() {
 		glfwPollEvents();
 		process_keys();
 
-		// TODO: This can be drawn once in every event
-		// no need to update every frame
 		gui::RenderBegin();
 
-		// FIXME: Transfer this to gui namespace somehow
 		draw_side_panel_window();
 		draw_table_window();
 		if(m_ErrorOccurred)
@@ -155,7 +169,6 @@ void MainApp::draw_table_window() {
 void MainApp::draw_table_combobox() {
 	// Make combobox full table window width
 	ImGui::SetNextItemWidth(m_WindowWidth - SIDE_MENU_WIDTH - 15);
-	// m_InsertRow = false; // Disable row insertion if the table is changed
 
 	// Draw combobox with different table names
 	if(ImGui::BeginCombo("##Tables", m_CurrentTable.c_str())) 
@@ -167,11 +180,6 @@ void MainApp::draw_table_combobox() {
 			{
 				m_CurrentTable = table;
 			}
-
-			// FIXME: What this does? Should it be in a program?
-			// if (is_selected) {
-			// 	ImGui::SetItemDefaultFocus();
-			// }
 		}
 		ImGui::EndCombo();
 		if(m_CurrentTable != m_LastTable)
@@ -223,7 +231,6 @@ void MainApp::insert_data() {
 
 	if(!m_ReceivedColNames) {
 		m_LastTableInfo = m_DB.GetTableInfo(m_CurrentTable);
-		m_LastTable = m_CurrentTable;
 		m_ReceivedColNames = true;
 	}
 
@@ -236,7 +243,7 @@ void MainApp::insert_data() {
 		ImGui::TableHeadersRow();
 
 		bool id_col_active = false;
-		if(m_CurrentTable == "Employee" || m_CurrentTable == "Hangar" || m_CurrentTable == "Airlane" || m_CurrentTable == "FlightRegister") {
+		if(m_CurrentTable == "Employee" || m_CurrentTable == "Hangar" || m_CurrentTable == "Airplane" || m_CurrentTable == "FlightRegister" || m_CurrentTable == "EmployeeAddress") {
 			id_col_active = true;
 		}
 
@@ -321,7 +328,6 @@ void MainApp::delete_data() {
 	}
 	else {
 		ImGui::Text("Select row's primary key to remove:");
-		// ImGui::SetNextItemWidth(del_button_size.x);
 		ImGui::Text("%s:", m_LastQuery_Columns[0].c_str());
 		ImGui::SameLine();
 		ImGui::SetNextItemWidth(m_WindowWidth - SIDE_MENU_WIDTH - 100. * 2);
@@ -336,11 +342,6 @@ void MainApp::delete_data() {
 				{
 					m_SelectedIDCol = row[0];
 				}
-
-				// FIXME: What this does? Should it be in a program?
-				// if (is_selected) {
-				// 	ImGui::SetItemDefaultFocus();
-				// }
 			}
 			ImGui::EndCombo();
 		}
@@ -417,7 +418,7 @@ void MainApp::execute_query() {
 				"INNER JOIN Employee "
 				"ON EmployeeOnboard.Emp_ID = Employee.Emp_ID "
 				"WHERE Employee.Emp_Position = \"Pilot\" "
-				//"GROUP BY EmployeeOnboard.Emp_ID , Employee.Emp_Name, Employee.Emp_Surname "
+				// "GROUP BY EmployeeOnboard.Emp_ID , Employee.Emp_Name, Employee.Emp_Surname "
 				// "HAVING Employee.Emp_Position = \"Pilot\";"
 			;
 

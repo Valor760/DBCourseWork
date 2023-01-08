@@ -1,11 +1,6 @@
 #include "sqlite3.h"
 
-#include <string>
-#include <iostream>
-#include <stdexcept>
-#include <vector>
-
-// #define TABLE_COLUMN_DELIMITER ";;;"
+#include "common.h"
 
 
 namespace DB {
@@ -24,11 +19,11 @@ class DataBase {
 		bool execute(const std::string query, ...);
 
 		// Returns m_LastQuery_Values
-		const std::vector<std::vector<std::string>>& GetLastQueryResult() const;
+		const TableRows& GetLastQueryResult() const;
 		// Returns m_LastQuery_Columns
-		const std::vector<std::string>& GetLastQueryColumns() const;
+		const TableCols& GetLastQueryColumns() const;
 		const std::string& GetLastErrorMsg() const;
-		std::vector<std::vector<std::string>> GetTableInfo(const std::string& table_name);
+		const TableRows& GetTableInfo(const std::string& table_name);
 
 	
 	private:
@@ -40,8 +35,8 @@ class DataBase {
 	private:
 		sqlite3* m_DB = nullptr;
 
-		static inline std::vector<std::string> m_LastQuery_Columns;
-		static inline std::vector<std::vector<std::string>> m_LastQuery_Values;
+		static inline TableCols m_LastQuery_Columns;
+		static inline TableRows m_LastQuery_Values;
 		std::string m_LastErrorMsg = "";
 };
 } // namespace DB

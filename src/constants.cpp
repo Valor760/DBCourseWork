@@ -17,7 +17,7 @@ const std::string create_table_baggage =
 	"B_ID INTEGER PRIMARY KEY AUTOINCREMENT,"
 	"B_Weight_KG REAL NOT NULL,"
 	"B_IsFragile BOOLEAN NOT NULL,"
-	"P_ID INTEGER,"
+	"P_ID INTEGER NOT NULL,"
 	
 	"CHECK(B_Weight_KG < 10),"
 	"FOREIGN KEY (P_ID) REFERENCES Passenger(P_ID)"
@@ -45,6 +45,7 @@ const std::string create_table_hangars =
 	"Plane_ID TEXT,"
 	
 	"CHECK(length(H_ID) = 3 AND length(Plane_ID) = 10),"
+	"CHECK(H_Size in (10, 50, 95)),"
 	"FOREIGN KEY (Plane_ID) REFERENCES Airplane(Plane_ID)"
 	");"
 ;
