@@ -445,6 +445,7 @@ void MainApp::execute_query() {
 				"INNER JOIN FlightRegister ON FlightRegister.FL_ID = Flight.FL_ID "
 				"INNER JOIN Passenger ON FlightRegister.P_ID = Passenger.P_ID "
 				"INNER JOIN Baggage ON Passenger.P_ID = Baggage.P_ID "
+				"GROUP BY Airplane.Plane_ID "
 			;
 
 			ImGui::SameLine();
@@ -460,7 +461,7 @@ void MainApp::execute_query() {
 		}
 		case CONSTS::LABEL_QUERY_4:
 		{
-			ImGui::Text("Show who did use Riga airport for more than 5 flights");
+			ImGui::Text("Show who did use Riga airport for more than 3 flights");
 
 			const std::string query =
 				"SELECT "
