@@ -97,7 +97,7 @@ const std::string create_table_flights =
 	"CHECK(FL_Takeoff_City NOT IN (\"Rome\", \"Moscow\", \"London\")),"
 	"CHECK(FL_Land_City NOT IN (\"Rome\", \"Moscow\", \"London\")),"
 	
-	"FOREIGN KEY (Plane_ID) REFERENCES Plane(Plane_ID)"
+	"FOREIGN KEY (Plane_ID) REFERENCES Airplane(Plane_ID)"
 	");"
 ;
 
@@ -105,6 +105,7 @@ const std::string create_table_flightregister =
 	"CREATE TABLE IF NOT EXISTS FlightRegister ("
 	"FL_ID INTEGER,"
 	"P_ID INTEGER,"
+	"Sit_Nr TEXT,"
 	"PRIMARY KEY (FL_ID, P_ID),"
 	"FOREIGN KEY (FL_ID) REFERENCES Flight(FL_ID),"
 	"FOREIGN KEY (P_ID) REFERENCES Passenger(P_ID)"

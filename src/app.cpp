@@ -417,9 +417,8 @@ void MainApp::execute_query() {
 				"FROM EmployeeOnboard "
 				"INNER JOIN Employee "
 				"ON EmployeeOnboard.Emp_ID = Employee.Emp_ID "
-				"WHERE Employee.Emp_Position = \"Pilot\" "
-				// "GROUP BY EmployeeOnboard.Emp_ID , Employee.Emp_Name, Employee.Emp_Surname "
-				// "HAVING Employee.Emp_Position = \"Pilot\";"
+				"GROUP BY EmployeeOnboard.Emp_ID , Employee.Emp_Name, Employee.Emp_Surname "
+				"HAVING Employee.Emp_Position = \"Pilot\";"
 			;
 
 			ImGui::SameLine();
@@ -471,7 +470,7 @@ void MainApp::execute_query() {
 				"FROM Passenger "
 				"INNER JOIN FlightRegister ON Passenger.P_ID = FlightRegister.P_ID "
 				"GROUP BY Passenger.P_ID "
-				"HAVING COUNT(FlightRegister.FL_ID) >= 5 "
+				"HAVING COUNT(FlightRegister.FL_ID) >= 3 "
 			;
 
 			ImGui::SameLine();
@@ -551,7 +550,7 @@ void MainApp::execute_query() {
 				"INNER JOIN FlightRegister ON Flight.FL_ID = FlightRegister.FL_ID "
 				"INNER JOIN Passenger ON FlightRegister.P_ID = Passenger.P_ID "
 				"INNER JOIN Baggage ON Passenger.P_ID = Baggage.P_ID "
-				"WHERE Baggage.B_IsFragile = \"TRUE\" AND Employee.Emp_Position = \"Technician\" "
+				"WHERE Baggage.B_IsFragile = TRUE AND Employee.Emp_Position = \"Technician\" "
 			;
 
 			ImGui::SameLine();
