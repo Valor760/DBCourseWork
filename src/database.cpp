@@ -1,5 +1,8 @@
 #include "database.h"
+#include "constants.h"
 
+#include <iostream>
+#include <stdexcept>
 
 namespace DB {
 DataBase::~DataBase() {
@@ -8,13 +11,19 @@ DataBase::~DataBase() {
 
 void DataBase::init(std::string db_path) {
 	if(db_path.empty()) {
-		// FIXME: Change to logging
 		db_path = "database.db";
-		std::cout << "ERROR: Provided path is empty! Using default \"" << db_path << "\"\n";
+		LOG(LOG_INFO, "Provided path is empty! Using default \"" << db_path << "\"");
 	}
 
 	int result = sqlite3_open(db_path.c_str(), &m_DB);
-	throw std::runtime_error("Cannot open or create database on path: " + db_path);
+	if(result != SQLITE_OK)
+		throw std::runtime_error("Cannot open or create database on path: " + db_path);
+	
+	create_tables();
+}
+
+void DataBase::init() {
+	init("");
 }
 
 int DataBase::callback(void* data, int argc, char** argv, char** column_name) {
@@ -28,40 +37,46 @@ int DataBase::callback(void* data, int argc, char** argv, char** column_name) {
 
 		std::vector<std::string> curr_row;
 		for(int i = 0; i < argc; i++) {
-			curr_row.push_back(std::string(argv[i]));
+			// Sqlite returns 'NULL' as 0x0, so a check is needed
+			curr_row.push_back(std::string(argv[i] == NULL ? "NULL" : argv[i]));
 		}
 		m_LastQuery_Values.push_back(curr_row);
-		return 0;
 	}
-	return -1;
+	return 0;
 }
 
-int DataBase::execute(const std::string& query) {
+bool DataBase::execute(const std::string query, ...) {
 	if(query.empty()) {
-		std::cout << "ERROR: Execution query is empty!\n";
-		return -1;
+		LOG(LOG_ERR, "Execution query is empty!");
+		return false;
 	}
 
 	empty_last_query();
+	
+	char buff[1024];
+	va_list ap;
+	va_start(ap, query);
+	vsnprintf(buff, 1024, query.c_str(), ap);
+	va_end(ap);
 
 	char* error_msg = nullptr;
-	if(sqlite3_exec(m_DB, query.c_str(), callback, nullptr, &error_msg) != SQLITE_OK) {
-		std::cout << "An error while executing SQL statement occurred!\n"
-			<< "SQL: " << query << '\n'
-			<< "Error msg: " << error_msg << '\n';
+	if(sqlite3_exec(m_DB, buff, callback, nullptr, &error_msg) != SQLITE_OK) {
+		LOG(LOG_ERR,	"An error while executing SQL statement occurred!\n"
+					 << "SQL: " << buff << '\n'
+					 << "Error msg: " << error_msg);
+
+		m_LastErrorMsg = std::string(error_msg);
 		sqlite3_free(error_msg);
-		return -1;
+		return false;
 	}
-	else {
-		return 0;
-	}
+	return true;
 }
 
-auto& DataBase::get_last_query_result() const {
+const TableRows& DataBase::GetLastQueryResult() const {
 	return m_LastQuery_Values;
 }
 
-auto& DataBase::get_last_query_columns() const {
+const TableCols& DataBase::GetLastQueryColumns() const {
 	return m_LastQuery_Columns;
 }
 
@@ -74,6 +89,25 @@ void DataBase::empty_last_query() {
 	while(!m_LastQuery_Values.empty())
 		m_LastQuery_Values.pop_back();
 
-	std::cout << "Emptied last query\n";
+	LOG(LOG_INFO, "Emptied last query");
+}
+
+void DataBase::create_tables() {
+	for(auto& query : CONSTS::ALL_CREATE_TABLES) {
+		if(!execute(query)) {
+			throw std::runtime_error("Error creating tables!");
+		}
+	}
+}
+
+const std::string& DataBase::GetLastErrorMsg() const {
+	return m_LastErrorMsg;
+}
+
+const TableRows& DataBase::GetTableInfo(const std::string& table_name) {
+	if(!execute("PRAGMA table_info( %s );", table_name.c_str())) {
+		LOG(LOG_ERR, "Couldn't get table_info for \"" << table_name << "\" table!");
+	}
+	return m_LastQuery_Values;
 }
 } // namespace DB

@@ -1,10 +1,6 @@
 #include "sqlite3.h"
 
-#include <string.h>
-#include <iostream>
-#include <vector>
-
-#define TABLE_COLUMN_DELIMITER ";;;"
+#include "common.h"
 
 
 namespace DB {
@@ -17,27 +13,30 @@ class DataBase {
 		DataBase(DataBase&&) = delete;
 		DataBase& operator=(const DataBase&) = delete;
 
-		// Initialize database
-		//
-		// return 0 if success, -1 otherwise
+		// Initialize database and tables
+		void init();
 		void init(std::string db_path);
-		int execute(const std::string& query);
+		bool execute(const std::string query, ...);
 
 		// Returns m_LastQuery_Values
-		auto& get_last_query_result() const;
+		const TableRows& GetLastQueryResult() const;
 		// Returns m_LastQuery_Columns
-		auto& get_last_query_columns() const;
+		const TableCols& GetLastQueryColumns() const;
+		const std::string& GetLastErrorMsg() const;
+		const TableRows& GetTableInfo(const std::string& table_name);
 
-		// Empties m_LastQuery_Columns and m_LastQuery_Values
-		void empty_last_query();
 	
 	private:
 		static int callback(void* data, int argc, char** argv, char** column_name);
+		void create_tables();
+		// Empties m_LastQuery_Columns and m_LastQuery_Values
+		void empty_last_query();
 
 	private:
 		sqlite3* m_DB = nullptr;
 
-		static inline std::vector<std::string> m_LastQuery_Columns;
-		static inline std::vector<std::vector<std::string>> m_LastQuery_Values;
+		static inline TableCols m_LastQuery_Columns;
+		static inline TableRows m_LastQuery_Values;
+		std::string m_LastErrorMsg = "";
 };
 } // namespace DB
